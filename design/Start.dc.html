@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color: #F6EDE8; font-family: 'Figtree', sans-serif; }
+  a { color: #F6EDE8; text-decoration: none; }
+  a:hover { color: #B08D57; }
+</style>
+</helmet>
+
+<div style="min-height:100vh; display:flex; flex-direction:column">
+  <nav style="display:flex; align-items:center; justify-content:space-between; padding:28px 64px">
+    <a href="Landing.dc.html" style="font-family:'Marcellus',serif; font-size:24px; letter-spacing:0.12em; color:#F6EDE8">E&#8209;MOTION</a>
+    <a href="Login.dc.html" style="font-size:14px; color:rgba(246,237,232,0.6)">Already a member? Log in</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 64px 80px">
+    <div style="display:flex; gap:10px; margin-bottom:48px">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
+        <div style="width:44px; height:4px; border-radius:100px; background:{{ st.bg }}"></div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ onStyleStep }}" hint-placeholder-val="{{ true }}">
+      <div style="text-align:center; max-width:840px">
+        <p style="margin:0 0 16px; font-size:13px; letter-spacing:0.28em; text-transform:uppercase; color:#B08D57">Step 1 of 3</p>
+        <h1 style="margin:0 0 48px; font-family:'Marcellus',serif; font-size:44px; font-weight:400; color:#F6EDE8">Which style calls you first?</h1>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px">
+          <sc-for list="{{ styleCards }}" as="s" hint-placeholder-count="4">
+            <div onClick="{{ s.pick }}" style="cursor:pointer; border:1px solid {{ s.border }}; background:{{ s.bg }}; border-radius:20px; padding:36px 24px; transition:all 0.15s" style-hover="border-color:#B08D57">
+              <div style="font-family:'Marcellus',serif; font-size:34px; color:#B08D57; margin-bottom:14px">{{ s.glyph }}</div>
+              <div style="font-family:'Marcellus',serif; font-size:20px; color:#F6EDE8; margin-bottom:8px">{{ s.name }}</div>
+              <div style="font-size:13px; line-height:1.5; color:rgba(246,237,232,0.6)">{{ s.hint }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin-top:28px; font-size:14px; color:rgba(246,237,232,0.5)">You can switch or add styles anytime.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ onLevelStep }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center; max-width:680px">
+        <p style="margin:0 0 16px; font-size:13px; letter-spacing:0.28em; text-transform:uppercase; color:#B08D57">Step 2 of 3 &middot; {{ chosenStyle }}</p>
+        <h1 style="margin:0 0 48px; font-family:'Marcellus',serif; font-size:44px; font-weight:400; color:#F6EDE8">Where are you starting from?</h1>
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <sc-for list="{{ levelCards }}" as="l" hint-placeholder-count="3">
+            <div onClick="{{ l.pick }}" style="cursor:pointer; display:flex; align-items:center; gap:24px; text-align:left; border:1px solid rgba(246,237,232,0.15); background:rgba(246,237,232,0.05); border-radius:18px; padding:26px 32px" style-hover="border-color:#B08D57; background:rgba(246,237,232,0.09)">
+              <div style="font-family:'Marcellus',serif; font-size:26px; color:#B08D57; width:40px">{{ l.num }}</div>
+              <div>
+                <div style="font-family:'Marcellus',serif; font-size:21px; color:#F6EDE8; margin-bottom:4px">{{ l.name }}</div>
+                <div style="font-size:14px; color:rgba(246,237,232,0.6)">{{ l.desc }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div onClick="{{ back }}" style="margin-top:28px; font-size:14px; color:rgba(246,237,232,0.5); cursor:pointer">&larr; Back</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ onLessonStep }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center; max-width:620px">
+        <p style="margin:0 0 16px; font-size:13px; letter-spacing:0.28em; text-transform:uppercase; color:#B08D57">Step 3 of 3</p>
+        <h1 style="margin:0 0 16px; font-family:'Marcellus',serif; font-size:44px; font-weight:400; color:#F6EDE8">Your first lesson is ready.</h1>
+        <p style="margin:0 0 44px; font-size:17px; color:rgba(246,237,232,0.65)">{{ chosenStyle }} &middot; {{ chosenLevel }} — here's exactly where to begin.</p>
+        <div style="background:#F6EDE8; color:#21302A; border-radius:24px; padding:40px 44px; text-align:left; box-shadow:0 32px 64px rgba(0,0,0,0.3)">
+          <div style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#B08D57; margin-bottom:12px">{{ firstLesson.course }}</div>
+          <div style="font-family:'Marcellus',serif; font-size:30px; color:#0F3D33; margin-bottom:10px">{{ firstLesson.title }}</div>
+          <p style="margin:0 0 28px; font-size:15px; line-height:1.65; color:#54655D">{{ firstLesson.desc }}</p>
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <span style="font-size:14px; color:#8A968E">Lesson 1 &middot; {{ firstLesson.mins }} min</span>
+            <a href="Profile.dc.html" style="background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color:#F6EDE8; padding:15px 34px; border-radius:100px; font-size:16px; font-weight:600" style-hover="background:#B08D57; color:#fff">Begin lesson &rarr;</a>
+          </div>
+        </div>
+        <div onClick="{{ back }}" style="margin-top:28px; font-size:14px; color:rgba(246,237,232,0.5); cursor:pointer">&larr; Change level</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { step: 0, style: null, level: null };
+  renderVals() {
+    const { step, style, level } = this.state;
+    const styles = [
+      { name: 'Hip hop', glyph: 'I', hint: 'Groove, bounce & freestyle' },
+      { name: 'Kizomba', glyph: 'II', hint: 'Connection & flow' },
+      { name: 'Bachata', glyph: 'III', hint: 'Sensual waves & footwork' },
+      { name: 'Afrobeats', glyph: 'IV', hint: 'Energy, legwork & joy' },
+    ];
+    const levels = [
+      { num: 'I', name: 'Total beginner', desc: "Never danced this style — start from the very first step." },
+      { num: 'II', name: 'Some experience', desc: 'You know the basics and want structure and polish.' },
+      { num: 'III', name: 'Comfortable dancer', desc: 'You social dance already and want to level up.' },
+    ];
+    const lessons = {
+      'Total beginner': { course: (style || 'Your style') + ' — Foundations', title: 'The First Groove', desc: 'Ten minutes to your first real movement: posture, weight shift and the basic rhythm of ' + (style || 'your style') + ', taught slow with a mirrored view.', mins: 10 },
+      'Some experience': { course: (style || 'Your style') + ' — Foundations', title: 'Fixing the Basics', desc: 'A quick calibration lesson: the three most common habits to clean up before the intermediate track opens.', mins: 12 },
+      'Comfortable dancer': { course: (style || 'Your style') + ' — Flow & Musicality', title: 'Dancing to the Song', desc: 'Jump straight into musicality: phrasing, accents and how to make familiar moves land on the music.', mins: 14 },
+    };
+    return {
+      steps: [0, 1, 2].map(i => ({ bg: i <= step ? '#B08D57' : 'rgba(246,237,232,0.15)' })),
+      onStyleStep: step === 0,
+      onLevelStep: step === 1,
+      onLessonStep: step === 2,
+      chosenStyle: style || '',
+      chosenLevel: level || '',
+      styleCards: styles.map(s => ({ ...s, bg: 'rgba(246,237,232,0.05)', border: 'rgba(246,237,232,0.15)', pick: () => this.setState({ style: s.name, step: 1 }) })),
+      levelCards: levels.map(l => ({ ...l, pick: () => this.setState({ level: l.name, step: 2 }) })),
+      firstLesson: lessons[level] || lessons['Total beginner'],
+      back: () => this.setState(s => ({ step: Math.max(0, s.step - 1) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

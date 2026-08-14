@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin: 0; background: radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color: #21302A; font-family: 'Figtree', sans-serif; }
+  a { color: #0F3D33; text-decoration: none; }
+  a:hover { color: #B08D57; }
+  input { font-family: 'Figtree', sans-serif; }
+  input:focus { outline: 2px solid #B08D57; outline-offset: 0; border-color: transparent; }
+</style>
+</helmet>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(420px,1fr)); min-height:100vh">
+  <div style="display:flex; align-items:center; justify-content:center; padding:64px; background:#F6EDE8">
+    <div style="width:100%; max-width:400px">
+      <a href="Landing.dc.html" style="font-family:'Marcellus',serif; font-size:24px; letter-spacing:0.12em; color:#0F3D33">E&#8209;MOTION</a>
+      <h1 style="margin:44px 0 10px; font-family:'Marcellus',serif; font-size:38px; font-weight:400; color:#0F3D33">Start your 7 free days.</h1>
+      <p style="margin:0 0 40px; font-size:16px; color:#8A968E">Then €29/month. Cancel anytime, two clicks.</p>
+      <div style="display:flex; flex-direction:column; gap:20px">
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <label style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#54655D">Name</label>
+          <input type="text" placeholder="Your name" style="padding:16px 18px; border:1px solid rgba(15,61,51,0.2); border-radius:12px; font-size:16px; background:#fff; color:#21302A">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <label style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#54655D">Email</label>
+          <input type="email" placeholder="you@example.com" style="padding:16px 18px; border:1px solid rgba(15,61,51,0.2); border-radius:12px; font-size:16px; background:#fff; color:#21302A">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <label style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#54655D">Password</label>
+          <input type="password" placeholder="8+ characters" style="padding:16px 18px; border:1px solid rgba(15,61,51,0.2); border-radius:12px; font-size:16px; background:#fff; color:#21302A">
+        </div>
+        <a href="Start.dc.html" style="display:block; text-align:center; background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color:#F6EDE8; padding:17px; border-radius:100px; font-size:16px; font-weight:600; margin-top:8px" style-hover="background:#B08D57; color:#fff">Create account</a>
+      </div>
+      <p style="margin:20px 0 0; font-size:13px; color:#8A968E; text-align:center; line-height:1.6">By continuing you agree to our Terms &amp; Privacy Policy.</p>
+      <p style="margin-top:32px; font-size:15px; color:#54655D; text-align:center">Already a member? <a href="Login.dc.html" style="color:#B08D57; font-weight:500">Log in</a></p>
+    </div>
+  </div>
+  <div style="position:relative; background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+    <image-slot id="register-side" shape="rect" placeholder="Photo: class energy"></image-slot>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(15,61,51,0.2), rgba(15,61,51,0.75)); pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; padding:64px">
+      <div style="display:flex; flex-direction:column; gap:18px; max-width:380px">
+        <div style="display:flex; gap:12px; color:#F6EDE8; font-size:16px"><span style="color:#B08D57">&#10003;</span> 320+ lessons across four styles</div>
+        <div style="display:flex; gap:12px; color:#F6EDE8; font-size:16px"><span style="color:#B08D57">&#10003;</span> New choreographies weekly</div>
+        <div style="display:flex; gap:12px; color:#F6EDE8; font-size:16px"><span style="color:#B08D57">&#10003;</span> No partner needed</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

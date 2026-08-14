@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin: 0; background: #E9E2DA; color: #21302A; font-family: 'Figtree', sans-serif; }
+  a { color: #0F3D33; text-decoration: none; }
+  a:hover { color: #B08D57; }
+</style>
+</helmet>
+
+<div style="padding:56px 64px 96px; display:flex; flex-direction:column; gap:72px">
+  <div>
+    <h1 style="margin:0 0 8px; font-family:'Marcellus',serif; font-size:32px; font-weight:400; color:#0F3D33">E&#8209;motion — Lesson Player</h1>
+    <p style="margin:0; font-size:15px; color:#54655D">Desktop, tablet, mobile landscape and portrait. Speed, mirror and loop controls are live — click them.</p>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Desktop — 1440</span>
+    <div style="width:1440px; height:820px; display:grid; grid-template-columns:296px 1fr 300px; grid-template-rows:minmax(0,820px); border-radius:20px; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,0.28); font-size:15px">
+
+      <aside style="display:flex; flex-direction:column; min-height:0; overflow:hidden; color:#F3E9E1; background:radial-gradient(120% 60% at 20% 0%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(165deg, #145643 0%, #0E4033 40%, #092E24 100%); border-right:1px solid rgba(246,237,232,0.12)">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:22px 24px; border-bottom:1px solid rgba(246,237,232,0.12)">
+          <span style="display:flex; align-items:center; gap:8px; font-size:15px; font-weight:500">&#8249; Back</span>
+          <span style="display:flex; align-items:center; gap:7px; font-size:13px; border:1px solid rgba(246,237,232,0.25); padding:7px 13px; border-radius:100px">EN &#9662;</span>
+        </div>
+        <div style="padding:26px 24px 22px; border-bottom:1px solid rgba(246,237,232,0.12)">
+          <div style="font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:#B08D57; margin-bottom:10px">Current course</div>
+          <div style="font-family:'Marcellus',serif; font-size:22px; line-height:1.25; margin-bottom:18px">Sensual Bachata Body Movement</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px"><span style="color:rgba(243,233,225,0.65)">Progress</span><span style="color:#B08D57; font-weight:600">32%</span></div>
+          <div style="height:5px; background:rgba(246,237,232,0.16); border-radius:100px; overflow:hidden"><div style="width:32%; height:100%; background:#B08D57"></div></div>
+        </div>
+        <div style="flex:1; min-height:0; overflow-y:auto; padding:14px 14px 24px; display:flex; flex-direction:column; gap:6px">
+          <sc-for list="{{ lessons }}" as="l" hint-placeholder-count="9">
+            <div onClick="{{ l.pick }}" style="cursor:pointer; display:flex; align-items:center; gap:14px; padding:14px 14px; border-radius:14px; background:{{ l.bg }}; border:1px solid {{ l.border }}" style-hover="background:rgba(246,237,232,0.09)">
+              <div style="width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; background:{{ l.dotBg }}; color:{{ l.dotFg }}; border:1px solid {{ l.dotBorder }}">{{ l.mark }}</div>
+              <div style="flex:1; min-width:0">
+                <div style="font-size:14px; color:{{ l.titleFg }}; line-height:1.35">{{ l.title }}</div>
+                <div style="font-size:11px; color:{{ l.subFg }}; margin-top:3px">{{ l.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </aside>
+
+      <main style="position:relative; background:#061F19">
+        <div style="position:absolute; inset:0"><image-slot id="p-video" shape="rect" placeholder="Lesson video frame"></image-slot></div>
+        <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start; padding:22px 26px; pointer-events:none; background:linear-gradient(180deg, rgba(6,31,25,0.7), rgba(6,31,25,0))">
+          <span style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#F3E9E1; background:rgba(6,31,25,0.55); border:1px solid rgba(246,237,232,0.28); padding:8px 16px; border-radius:100px">{{ viewLabel }}</span>
+          <span style="font-size:13px; color:#F3E9E1; background:rgba(6,31,25,0.55); border:1px solid rgba(246,237,232,0.28); padding:9px 14px; border-radius:12px">&#9634; Camera</span>
+        </div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:96px; height:96px; border-radius:50%; background:rgba(6,31,25,0.62); border:1px solid rgba(246,237,232,0.3); display:flex; align-items:center; justify-content:center">
+          <span style="font-size:30px; color:#B08D57; margin-left:6px">&#9654;</span>
+        </div>
+        <div style="position:absolute; left:0; right:0; bottom:0; padding:28px 32px 26px; background:linear-gradient(180deg, rgba(6,31,25,0), rgba(6,31,25,0.9))">
+          <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px">
+            <span style="font-size:13px; color:rgba(243,233,225,0.8); font-variant-numeric:tabular-nums">02:14</span>
+            <div style="flex:1; height:5px; background:rgba(246,237,232,0.22); border-radius:100px; position:relative">
+              <div style="width:38%; height:100%; background:#B08D57; border-radius:100px"></div>
+              <sc-if value="{{ loopOn }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; top:-4px; left:30%; width:26%; height:13px; border:1px solid #F0DCD3; border-radius:4px; background:rgba(240,220,211,0.2)"></div>
+              </sc-if>
+            </div>
+            <span style="font-size:13px; color:rgba(243,233,225,0.55); font-variant-numeric:tabular-nums">05:48</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <div style="display:flex; align-items:center; gap:14px; color:#F3E9E1; font-size:14px">
+              <span style="font-size:18px">&#9654;</span>
+              <span style="opacity:0.75">&#8249;&#8249; 10s</span>
+              <span style="opacity:0.75">10s &#8250;&#8250;</span>
+              <span style="opacity:0.75">&#9834; Volume</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px">
+              <div onClick="{{ toggleCaptions }}" style="cursor:pointer; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:8px 15px; border-radius:100px; border:1px solid {{ ccBorder }}; color:{{ ccFg }}">CC {{ ccLang }}</div>
+              <div onClick="{{ toggleView }}" style="cursor:pointer; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:8px 15px; border-radius:100px; border:1px solid #B08D57; color:#B08D57">{{ viewToggleLabel }}</div>
+              <span style="font-size:16px; color:#F3E9E1; opacity:0.8">&#9974;</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <aside style="display:flex; flex-direction:column; gap:16px; min-height:0; overflow-y:auto; padding:22px 20px 26px; color:#F3E9E1; background:radial-gradient(110% 60% at 80% 0%, rgba(220,255,240,0.08), rgba(220,255,240,0) 55%), linear-gradient(200deg, #12503F 0%, #0C3A2E 45%, #082A21 100%); border-left:1px solid rgba(246,237,232,0.12)">
+        <div style="display:flex; align-items:center; justify-content:center; gap:10px; background:rgba(61,155,124,0.22); border:1px solid #3D9B7C; color:#9FE3C6; border-radius:14px; padding:14px; font-size:14px; font-weight:600">&#10003; Completed</div>
+
+        <div style="border:1px solid rgba(246,237,232,0.18); border-radius:14px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#B08D57">
+          <span>Terms in this lesson</span><span>&#9662;</span>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(243,233,225,0.65); margin-bottom:10px"><span>Speed</span><span style="color:#B08D57">{{ speed }}%</span></div>
+          <div style="display:flex; gap:6px; background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.15); border-radius:12px; padding:5px">
+            <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="5">
+              <div onClick="{{ s.pick }}" style="cursor:pointer; flex:1; text-align:center; padding:9px 0; border-radius:9px; font-size:13px; font-weight:600; background:{{ s.bg }}; color:{{ s.fg }}">{{ s.val }}</div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(243,233,225,0.65); margin-bottom:10px">Frame&#8209;by&#8209;frame</div>
+          <div style="display:flex; border:1px solid rgba(246,237,232,0.15); background:rgba(246,237,232,0.07); border-radius:12px; overflow:hidden">
+            <div style="flex:1; text-align:center; padding:13px 0; font-size:16px; border-right:1px solid rgba(246,237,232,0.15)">&#9198;</div>
+            <div style="flex:1; text-align:center; padding:13px 0; font-size:16px">&#9197;</div>
+          </div>
+          <div style="display:flex; gap:16px; margin-top:8px; font-size:11px; color:rgba(243,233,225,0.5)"><span>, back</span><span>. forward</span></div>
+        </div>
+
+        <div onClick="{{ toggleLoop }}" style="cursor:pointer; text-align:center; border:1px solid {{ loopBorder }}; background:{{ loopBg }}; color:{{ loopFg }}; border-radius:14px; padding:14px; font-size:13px; letter-spacing:0.1em; text-transform:uppercase">&#8635; {{ loopLabel }}</div>
+
+        <div>
+          <div style="text-align:center; border:1px solid rgba(246,237,232,0.22); background:rgba(246,237,232,0.07); border-radius:14px; padding:14px; font-size:13px; letter-spacing:0.1em; text-transform:uppercase">&#9634; Dance in the mirror</div>
+          <p style="margin:8px 2px 0; font-size:11px; line-height:1.5; color:rgba(243,233,225,0.5); text-align:center">Splits the screen: lesson on one side, you on the other.</p>
+        </div>
+
+        <div style="border-top:1px solid rgba(246,237,232,0.14); padding-top:16px; display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.8)"><span>Summary notes</span><span style="color:#B08D57">&#8250;</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.8)"><span>Lesson quiz</span><span style="color:#B08D57">&#8250;</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.8)"><span>Download practice audio</span><span style="color:#B08D57">&#8250;</span></div>
+        </div>
+
+        <div style="margin-top:auto; display:flex; align-items:center; gap:10px; background:#F0DCD3; color:#0F3D33; border-radius:100px; padding:13px 18px; font-size:14px; font-weight:600">&#9788; Ask E&#8209;motion</div>
+      </aside>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:flex-start">
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Tablet — 1024 &times; 768</span>
+      <div style="width:1024px; height:768px; display:grid; grid-template-rows:1fr auto; border-radius:18px; overflow:hidden; box-shadow:0 32px 64px rgba(0,0,0,0.26)">
+        <div style="position:relative; background:#061F19">
+          <div style="position:absolute; inset:0"><image-slot id="t-video" shape="rect" placeholder="Lesson video frame"></image-slot></div>
+          <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:18px 22px; background:linear-gradient(180deg, rgba(6,31,25,0.72), rgba(6,31,25,0)); color:#F3E9E1">
+            <span style="font-size:14px">&#8249; Sensual Bachata Body Movement</span>
+            <span style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; border:1px solid rgba(246,237,232,0.28); padding:7px 14px; border-radius:100px">{{ viewLabel }}</span>
+          </div>
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:82px; height:82px; border-radius:50%; background:rgba(6,31,25,0.6); border:1px solid rgba(246,237,232,0.3); display:flex; align-items:center; justify-content:center"><span style="font-size:26px; color:#B08D57; margin-left:5px">&#9654;</span></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; padding:22px; background:linear-gradient(180deg, rgba(6,31,25,0), rgba(6,31,25,0.88)); color:#F3E9E1">
+            <div style="display:flex; align-items:center; gap:14px">
+              <span style="font-size:12px">02:14</span>
+              <div style="flex:1; height:5px; background:rgba(246,237,232,0.22); border-radius:100px"><div style="width:38%; height:100%; background:#B08D57; border-radius:100px"></div></div>
+              <span style="font-size:12px; color:rgba(243,233,225,0.55)">05:48</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:20px; padding:20px 26px; color:#F3E9E1; background:linear-gradient(120deg, #12503F 0%, #0C3A2E 60%, #082A21 100%); border-top:1px solid rgba(246,237,232,0.12)">
+          <div style="display:flex; align-items:center; gap:8px">
+            <span style="font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(243,233,225,0.6)">Speed</span>
+            <div style="display:flex; gap:5px; background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.15); border-radius:11px; padding:4px">
+              <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="5">
+                <div onClick="{{ s.pick }}" style="cursor:pointer; padding:7px 13px; border-radius:8px; font-size:13px; font-weight:600; background:{{ s.bg }}; color:{{ s.fg }}">{{ s.val }}</div>
+              </sc-for>
+            </div>
+          </div>
+          <div onClick="{{ toggleView }}" style="cursor:pointer; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:9px 16px; border-radius:100px; border:1px solid #B08D57; color:#B08D57">{{ viewToggleLabel }}</div>
+          <div onClick="{{ toggleLoop }}" style="cursor:pointer; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:9px 16px; border-radius:100px; border:1px solid {{ loopBorder }}; background:{{ loopBg }}; color:{{ loopFg }}">&#8635; A/B loop</div>
+          <div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:9px 16px; border-radius:100px; border:1px solid rgba(246,237,232,0.22)">&#9634; Mirror me</div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:8px; background:rgba(61,155,124,0.22); border:1px solid #3D9B7C; color:#9FE3C6; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:600">&#10003; Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:flex-start">
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Mobile landscape — full-bleed</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" width="{{ 874 }}" height="{{ 402 }}" hint-size="874px,402px">
+        <div style="height:100%; position:relative; font-family:'Figtree',sans-serif; color:#F3E9E1; background:#061F19">
+          <div style="position:absolute; inset:0"><image-slot id="ml-video" shape="rect" placeholder="Lesson video frame"></image-slot></div>
+          <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:16px 48px 12px; background:linear-gradient(180deg, rgba(6,31,25,0.7), rgba(6,31,25,0))">
+            <span style="font-size:13px">&#8249; Upper Body Waves</span>
+            <span style="font-size:10px; letter-spacing:0.14em; text-transform:uppercase; border:1px solid rgba(246,237,232,0.3); padding:6px 12px; border-radius:100px">{{ viewLabel }}</span>
+          </div>
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:66px; height:66px; border-radius:50%; background:rgba(6,31,25,0.6); border:1px solid rgba(246,237,232,0.3); display:flex; align-items:center; justify-content:center"><span style="font-size:22px; color:#B08D57; margin-left:4px">&#9654;</span></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; padding:14px 48px 30px; background:linear-gradient(180deg, rgba(6,31,25,0), rgba(6,31,25,0.9))">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px">
+              <span style="font-size:11px">02:14</span>
+              <div style="flex:1; height:4px; background:rgba(246,237,232,0.24); border-radius:100px"><div style="width:38%; height:100%; background:#B08D57; border-radius:100px"></div></div>
+              <span style="font-size:11px; color:rgba(243,233,225,0.55)">05:48</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:10px; letter-spacing:0.1em; text-transform:uppercase">
+              <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="5">
+                <div onClick="{{ s.pick }}" style="cursor:pointer; padding:6px 11px; border-radius:100px; background:{{ s.bg }}; color:{{ s.fg }}; border:1px solid rgba(246,237,232,0.2)">{{ s.val }}</div>
+              </sc-for>
+              <div onClick="{{ toggleLoop }}" style="cursor:pointer; margin-left:6px; padding:6px 12px; border-radius:100px; border:1px solid {{ loopBorder }}; background:{{ loopBg }}; color:{{ loopFg }}">&#8635; Loop</div>
+              <div style="margin-left:auto; padding:6px 12px; border-radius:100px; border:1px solid rgba(246,237,232,0.22)">&#9634; Mirror me</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Mobile portrait</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+        <div style="min-height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; padding:56px 0 44px; background:radial-gradient(120% 50% at 15% 8%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(165deg, #145643 0%, #0E4033 40%, #092E24 100%)">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 20px 16px">
+            <span style="font-size:14px">&#8249; Back</span>
+            <span style="font-size:12px; border:1px solid rgba(246,237,232,0.25); padding:6px 12px; border-radius:100px">EN &#9662;</span>
+          </div>
+          <div style="position:relative; height:212px; margin:0 0 18px; background:#061F19">
+            <div style="position:absolute; inset:0"><image-slot id="mp-video" shape="rect" placeholder="Lesson video"></image-slot></div>
+            <div style="position:absolute; top:12px; left:14px; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; background:rgba(6,31,25,0.6); border:1px solid rgba(246,237,232,0.3); padding:5px 11px; border-radius:100px">{{ viewLabel }}</div>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:58px; height:58px; border-radius:50%; background:rgba(6,31,25,0.6); border:1px solid rgba(246,237,232,0.3); display:flex; align-items:center; justify-content:center"><span style="font-size:20px; color:#B08D57; margin-left:4px">&#9654;</span></div>
+            <div style="position:absolute; left:14px; right:14px; bottom:12px; display:flex; align-items:center; gap:10px">
+              <span style="font-size:10px">02:14</span>
+              <div style="flex:1; height:4px; background:rgba(246,237,232,0.25); border-radius:100px"><div style="width:38%; height:100%; background:#B08D57; border-radius:100px"></div></div>
+              <span style="font-size:10px; color:rgba(243,233,225,0.55)">05:48</span>
+            </div>
+          </div>
+          <div style="padding:0 20px">
+            <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#B08D57; margin-bottom:6px">Lesson 9 of 28</div>
+            <h2 style="margin:0 0 18px; font-family:'Marcellus',serif; font-size:23px; font-weight:400; line-height:1.25">Upper Body Waves, Slowed Down</h2>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(61,155,124,0.22); border:1px solid #3D9B7C; color:#9FE3C6; border-radius:12px; padding:12px; font-size:13px; font-weight:600; margin-bottom:18px">&#10003; Completed</div>
+            <div style="display:flex; justify-content:space-between; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(243,233,225,0.6); margin-bottom:8px"><span>Speed</span><span style="color:#B08D57">{{ speed }}%</span></div>
+            <div style="display:flex; gap:5px; background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.15); border-radius:12px; padding:5px; margin-bottom:16px">
+              <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="5">
+                <div onClick="{{ s.pick }}" style="cursor:pointer; flex:1; text-align:center; padding:9px 0; border-radius:9px; font-size:13px; font-weight:600; background:{{ s.bg }}; color:{{ s.fg }}">{{ s.val }}</div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:16px">
+              <div onClick="{{ toggleView }}" style="cursor:pointer; flex:1; text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; padding:12px 0; border-radius:12px; border:1px solid #B08D57; color:#B08D57">{{ viewToggleLabel }}</div>
+              <div onClick="{{ toggleLoop }}" style="cursor:pointer; flex:1; text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; padding:12px 0; border-radius:12px; border:1px solid {{ loopBorder }}; background:{{ loopBg }}; color:{{ loopFg }}">&#8635; A/B loop</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:22px">
+              <div style="flex:1; text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; padding:12px 0; border-radius:12px; border:1px solid rgba(246,237,232,0.2)">&#9198; Frame</div>
+              <div style="flex:1; text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; padding:12px 0; border-radius:12px; border:1px solid rgba(246,237,232,0.2)">&#9634; Mirror me</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; border-top:1px solid rgba(246,237,232,0.14); padding-top:16px">
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.85)"><span>Terms in this lesson</span><span style="color:#B08D57">&#9662;</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.85)"><span>Summary notes</span><span style="color:#B08D57">&#8250;</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.85)"><span>Lesson quiz</span><span style="color:#B08D57">&#8250;</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(243,233,225,0.85)"><span>Up next &middot; Lesson 10</span><span style="color:#B08D57">&#8250;</span></div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1560,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { speed: 100, mirrored: true, loop: false, cc: true, current: 8 };
+  renderVals() {
+    const { speed, mirrored, loop, cc, current } = this.state;
+    const titles = [
+      ['Why body movement matters', '4 min'],
+      ['Posture & the neutral frame', '7 min'],
+      ['Isolating the ribcage', '9 min'],
+      ['The basic wave, counted', '8 min'],
+      ['Hip figure-eights', '11 min'],
+      ['Adding the arms', '6 min'],
+      ['Waves in the basic step', '10 min'],
+      ['Control at half speed', '9 min'],
+      ['Upper Body Waves, Slowed Down', '12 min'],
+      ['Combining waves & turns', '13 min'],
+      ['Drill: 8 counts, slow to full', '8 min'],
+    ];
+    return {
+      speed,
+      speeds: [70, 80, 90, 100, 110].map(v => ({
+        val: v,
+        bg: v === speed ? '#B08D57' : 'transparent',
+        fg: v === speed ? '#0F3D33' : 'rgba(243,233,225,0.8)',
+        pick: () => this.setState({ speed: v }),
+      })),
+      viewLabel: mirrored ? 'Mirrored view' : 'Back view',
+      viewToggleLabel: mirrored ? 'Back view' : 'Mirrored',
+      toggleView: () => this.setState(s => ({ mirrored: !s.mirrored })),
+      loopOn: loop,
+      loopLabel: loop ? 'A/B loop on' : 'Enable A/B loop',
+      loopBg: loop ? 'rgba(176,141,87,0.25)' : 'rgba(246,237,232,0.07)',
+      loopBorder: loop ? '#B08D57' : 'rgba(246,237,232,0.22)',
+      loopFg: loop ? '#B08D57' : 'rgba(243,233,225,0.85)',
+      toggleLoop: () => this.setState(s => ({ loop: !s.loop })),
+      ccLang: cc ? 'EN' : 'off',
+      ccBorder: cc ? '#F0DCD3' : 'rgba(246,237,232,0.3)',
+      ccFg: cc ? '#F0DCD3' : 'rgba(243,233,225,0.6)',
+      toggleCaptions: () => this.setState(s => ({ cc: !s.cc })),
+      lessons: titles.map(([title, sub], i) => {
+        const isCurrent = i === current, done = i < current;
+        return {
+          title,
+          sub: isCurrent ? 'Now playing' : done ? 'Completed · ' + sub : sub,
+          bg: isCurrent ? 'rgba(176,141,87,0.2)' : 'transparent',
+          border: isCurrent ? '#B08D57' : 'transparent',
+          mark: done ? '✓' : String(i + 1),
+          dotBg: done ? '#3D9B7C' : isCurrent ? '#B08D57' : 'transparent',
+          dotFg: done || isCurrent ? '#062B22' : 'rgba(243,233,225,0.6)',
+          dotBorder: done || isCurrent ? 'transparent' : 'rgba(246,237,232,0.3)',
+          titleFg: isCurrent ? '#F3E9E1' : 'rgba(243,233,225,0.85)',
+          subFg: isCurrent ? '#B08D57' : 'rgba(243,233,225,0.45)',
+          pick: () => this.setState({ current: i }),
+        };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>

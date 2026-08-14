@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin: 0; background: radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color: #F3E9E1; font-family: 'Figtree', sans-serif; }
+  a { color: #F3E9E1; text-decoration: none; }
+  a:hover { color: #B08D57; }
+</style>
+</helmet>
+
+<nav style="display:flex; align-items:center; justify-content:space-between; padding:28px 64px; background:rgba(9,43,34,0.92); backdrop-filter:blur(8px); position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(246,237,232,0.12)">
+  <a href="Landing.dc.html" style="font-family:'Marcellus',serif; font-size:26px; letter-spacing:0.12em; color:#F3E9E1">E&#8209;MOTION</a>
+  <div style="display:flex; align-items:center; gap:40px; font-size:15px; letter-spacing:0.04em">
+    <a href="Landing.dc.html#courses" style="color:rgba(243,233,225,0.85)">Courses</a>
+    <a href="Instructors.dc.html" style="color:#B08D57">Instructor</a>
+    <a href="Landing.dc.html#pricing" style="color:rgba(243,233,225,0.85)">Pricing</a>
+    <a href="Login.dc.html" style="color:#F3E9E1">Log in</a>
+    <a href="Start.dc.html" style="background:#F0DCD3; color:#0F3D33; padding:13px 28px; border-radius:100px; font-weight:500; white-space:nowrap" style-hover="background:#B08D57; color:#fff">Start free</a>
+  </div>
+</nav>
+
+<header style="max-width:1080px; margin:0 auto; padding:96px 64px 72px; text-align:center">
+  <p style="margin:0 0 20px; font-size:13px; letter-spacing:0.28em; text-transform:uppercase; color:#B08D57">Your teacher</p>
+  <h1 style="margin:0 0 24px; font-family:'Marcellus',serif; font-size:58px; font-weight:400; color:#F3E9E1; line-height:1.1">Sanjay MJ</h1>
+  <p style="margin:0 auto; font-size:20px; color:rgba(243,233,225,0.7); max-width:520px; line-height:1.65">Known on the floor as <em>The Indian Magic</em>. One teacher, four styles, and a way of explaining movement that just clicks.</p>
+</header>
+
+<section style="max-width:1160px; margin:0 auto; padding:0 64px 96px; display:grid; grid-template-columns:repeat(auto-fit,minmax(400px,1fr)); gap:72px; align-items:start">
+  <div style="position:relative">
+    <div style="height:580px"><image-slot id="sanjay-main" shape="rounded" radius="24" placeholder="Portrait: Sanjay MJ"></image-slot></div>
+    <div style="position:absolute; bottom:-22px; right:-22px; background:#B08D57; color:#fff; border-radius:16px; padding:18px 26px; font-family:'Marcellus',serif; font-size:18px; box-shadow:0 20px 40px rgba(176,141,87,0.35)">&ldquo;The Indian Magic&rdquo;</div>
+  </div>
+  <div>
+    <h2 style="margin:0 0 24px; font-family:'Marcellus',serif; font-size:34px; font-weight:400; color:#F3E9E1">Movement first. Steps second.</h2>
+    <p style="margin:0 0 20px; font-size:17px; line-height:1.75; color:rgba(243,233,225,0.7)">Sanjay started in hip hop battles in Mumbai, fell for kizomba in Lisbon, and spent the last decade teaching bachata and afrobeats across Europe. What ties it together is his method: feel the music before you count it.</p>
+    <p style="margin:0 0 40px; font-size:17px; line-height:1.75; color:rgba(243,233,225,0.7)">Every E&#8209;motion lesson is filmed with mirrored and back views, broken into short focused drills, and taught the way he teaches in the room — warm, unhurried, and always with a reason behind every move.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
+      <sc-for list="{{ facts }}" as="f" hint-placeholder-count="4">
+        <div style="background:#F0DCD3; border-radius:18px; padding:26px 28px">
+          <div style="font-family:'Marcellus',serif; font-size:30px; color:#0F3D33; margin-bottom:6px">{{ f.big }}</div>
+          <div style="font-size:14px; color:#54655D; line-height:1.5">{{ f.small }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); padding:96px 64px">
+  <div style="max-width:1080px; margin:0 auto">
+    <h2 style="margin:0 0 56px; font-family:'Marcellus',serif; font-size:38px; font-weight:400; color:#F6EDE8; text-align:center">How Sanjay teaches each style</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:24px">
+      <sc-for list="{{ approaches }}" as="a" hint-placeholder-count="4">
+        <div style="background:rgba(246,237,232,0.06); border:1px solid rgba(246,237,232,0.12); border-radius:20px; padding:36px 36px 32px">
+          <div style="font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:#B08D57; margin-bottom:14px">{{ a.style }}</div>
+          <h3 style="margin:0 0 12px; font-family:'Marcellus',serif; font-size:23px; font-weight:400; color:#F6EDE8">{{ a.title }}</h3>
+          <p style="margin:0; font-size:15px; line-height:1.7; color:rgba(246,237,232,0.65)">{{ a.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="padding:100px 64px; text-align:center">
+  <h2 style="margin:0 0 20px; font-family:'Marcellus',serif; font-size:38px; font-weight:400; color:#F3E9E1">Learn with Sanjay, from today.</h2>
+  <p style="margin:0 0 40px; font-size:17px; color:rgba(243,233,225,0.7)">7 days free, then €29/month. Cancel anytime.</p>
+  <a href="Start.dc.html" style="background:#F0DCD3; color:#0F3D33; padding:18px 44px; border-radius:100px; font-size:17px; font-weight:500; display:inline-block; white-space:nowrap" style-hover="background:#B08D57; color:#fff">Start 7 days free</a>
+</section>
+
+<footer style="background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10) 0%, rgba(220,255,240,0) 55%), radial-gradient(90% 65% at 82% 92%, rgba(236,255,246,0.07) 0%, rgba(236,255,246,0) 60%), radial-gradient(70% 50% at 60% 50%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 72%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%); color:rgba(246,237,232,0.45); padding:36px 64px; font-size:13px; display:flex; justify-content:space-between">
+  <span>&copy; 2026 E&#8209;motion. Keep moving.</span>
+  <div style="display:flex; gap:28px"><a href="Landing.dc.html" style="color:rgba(246,237,232,0.7)">Home</a><a href="Login.dc.html" style="color:rgba(246,237,232,0.7)">Log in</a></div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      facts: [
+        { big: '12 yrs', small: 'Dancing across four styles' },
+        { big: '8 yrs', small: 'Teaching in studios & online' },
+        { big: '2,000+', small: 'Students taught across Europe & India' },
+        { big: '4', small: 'Styles: hip hop, kizomba, bachata, afrobeats' },
+      ],
+      approaches: [
+        { style: 'Hip hop', title: 'Groove before choreography', desc: 'Bounce and rock until they live in your body, then vocabulary, then routines. Freestyle confidence is the goal, not memorised counts.' },
+        { style: 'Kizomba', title: 'Connection you can feel', desc: 'Posture and walking come first. Sanjay teaches the lead and follow side of every movement so you understand both halves of the dance.' },
+        { style: 'Bachata', title: 'Timing that feels good', desc: 'Basic step, turns and body movement layered gradually — with musicality drills so you dance to the song, not through it.' },
+        { style: 'Afrobeats', title: 'Joy is the technique', desc: 'Legwork and isolations broken into slow drills, then brought up to tempo with the energy the music demands.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

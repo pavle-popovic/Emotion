@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin: 0; background: #E9E2DA; color: #21302A; font-family: 'Figtree', sans-serif; }
+  a { color: #0F3D33; text-decoration: none; }
+  a:hover { color: #B08D57; }
+</style>
+</helmet>
+
+<div style="padding:56px 64px 96px">
+  <h1 style="margin:0 0 8px; font-family:'Marcellus',serif; font-size:32px; font-weight:400; color:#0F3D33">E&#8209;motion — Mobile</h1>
+  <p style="margin:0 0 48px; font-size:15px; color:#54655D">Portrait screens, then landscape below.</p>
+
+  <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:flex-start; margin-bottom:96px">
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Home / Landing</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+        <div style="min-height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; padding:64px 0 48px; background:radial-gradient(120% 60% at 15% 5%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), radial-gradient(90% 45% at 82% 95%, rgba(236,255,246,0.07), rgba(236,255,246,0) 60%), linear-gradient(160deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 24px 28px">
+            <span style="font-family:'Marcellus',serif; font-size:20px; letter-spacing:0.12em">E&#8209;MOTION</span>
+            <div style="display:flex; flex-direction:column; gap:5px"><div style="width:22px; height:2px; background:#F3E9E1"></div><div style="width:22px; height:2px; background:#F3E9E1"></div></div>
+          </div>
+          <div style="padding:8px 24px 32px">
+            <p style="margin:0 0 14px; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:#B08D57">Hip hop &middot; Kizomba &middot; Bachata &middot; Afrobeats</p>
+            <h2 style="margin:0 0 16px; font-family:'Marcellus',serif; font-size:36px; line-height:1.12; font-weight:400">Learn to move the way music makes you feel.</h2>
+            <p style="margin:0 0 24px; font-size:15px; line-height:1.6; color:rgba(243,233,225,0.7)">Structured courses in four styles. No partner needed.</p>
+            <div style="background:#F0DCD3; color:#0F3D33; padding:16px; border-radius:100px; font-size:16px; font-weight:600; text-align:center">Start 7 days free</div>
+            <p style="margin:12px 0 0; font-size:12px; color:rgba(243,233,225,0.5); text-align:center">then €29/month &middot; cancel anytime</p>
+          </div>
+          <div style="height:230px; margin:0 24px 36px"><image-slot id="m-hero" shape="rounded" radius="20" placeholder="Hero: dancer"></image-slot></div>
+          <div style="padding:0 24px 36px">
+            <p style="margin:0 0 10px; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:#B08D57">Four styles, one home</p>
+            <h3 style="margin:0 0 20px; font-family:'Marcellus',serif; font-size:24px; font-weight:400">Find your rhythm.</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+              <sc-for list="{{ styles }}" as="s" hint-placeholder-count="4">
+                <div style="background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.15); border-radius:16px; overflow:hidden">
+                  <div style="height:96px"><image-slot id="{{ s.slot }}" shape="rect" placeholder="{{ s.name }}"></image-slot></div>
+                  <div style="padding:12px 14px 14px"><div style="font-family:'Marcellus',serif; font-size:16px">{{ s.name }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin:0 20px 36px; background:#F6EDE8; color:#21302A; border-radius:24px; padding:28px 24px">
+            <p style="margin:0 0 6px; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:#B08D57">The courses</p>
+            <h3 style="margin:0 0 18px; font-family:'Marcellus',serif; font-size:22px; font-weight:400; color:#0F3D33">Everything, from day one.</h3>
+            <sc-for list="{{ mCourses }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; gap:14px; padding:14px 0; border-top:1px solid rgba(15,61,51,0.12)">
+                <span style="font-family:'Marcellus',serif; font-size:13px; color:#B08D57">{{ c.num }}</span>
+                <div style="flex:1">
+                  <div style="font-family:'Marcellus',serif; font-size:15px; color:#0F3D33">{{ c.title }}</div>
+                  <div style="font-size:12px; color:#8A968E; margin-top:2px">{{ c.style }} &middot; {{ c.lessons }} lessons</div>
+                </div>
+                <span style="font-size:16px; color:#B08D57">&rarr;</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin:0 20px; background:#F6EDE8; color:#21302A; border-radius:24px; padding:32px 24px; text-align:center">
+            <div style="font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:#B08D57; margin-bottom:12px">E&#8209;motion Membership</div>
+            <div style="font-family:'Marcellus',serif; font-size:44px; color:#0F3D33">€29<span style="font-size:15px; color:#8A968E">/month</span></div>
+            <p style="margin:10px 0 20px; font-size:13px; color:#54655D">All courses &middot; weekly drops &middot; cancel anytime</p>
+            <div style="background:#0F3D33; color:#F3E9E1; padding:15px; border-radius:100px; font-size:15px; font-weight:600">Start 7 days free</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Start — onboarding</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+        <div style="min-height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; padding:80px 24px 48px; display:flex; flex-direction:column; background:radial-gradient(120% 60% at 15% 5%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(160deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+          <div style="display:flex; gap:8px; justify-content:center; margin-bottom:40px">
+            <div style="width:36px; height:4px; border-radius:100px; background:#B08D57"></div>
+            <div style="width:36px; height:4px; border-radius:100px; background:rgba(246,237,232,0.15)"></div>
+            <div style="width:36px; height:4px; border-radius:100px; background:rgba(246,237,232,0.15)"></div>
+          </div>
+          <p style="margin:0 0 12px; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:#B08D57; text-align:center">Step 1 of 3</p>
+          <h2 style="margin:0 0 32px; font-family:'Marcellus',serif; font-size:30px; font-weight:400; text-align:center">Which style calls you first?</h2>
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <sc-for list="{{ startStyles }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:18px; border:1px solid rgba(246,237,232,0.15); background:rgba(246,237,232,0.05); border-radius:16px; padding:20px 22px">
+                <span style="font-family:'Marcellus',serif; font-size:20px; color:#B08D57; width:28px">{{ s.glyph }}</span>
+                <div>
+                  <div style="font-family:'Marcellus',serif; font-size:18px">{{ s.name }}</div>
+                  <div style="font-size:13px; color:rgba(243,233,225,0.6); margin-top:2px">{{ s.hint }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:24px 0 0; font-size:13px; color:rgba(243,233,225,0.5); text-align:center">You can switch or add styles anytime.</p>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Profile</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+        <div style="min-height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; padding:72px 20px 48px; background:radial-gradient(120% 60% at 15% 5%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(160deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+          <div style="display:flex; align-items:center; gap:18px; padding:12px 4px 28px">
+            <div style="width:64px; height:64px; flex-shrink:0"><image-slot id="m-avatar" shape="circle" placeholder="Photo"></image-slot></div>
+            <div>
+              <div style="font-family:'Marcellus',serif; font-size:24px">Maya Fernandes</div>
+              <div style="font-size:13px; color:rgba(243,233,225,0.6); margin-top:2px">Bachata &amp; Kizomba</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:12px; margin-bottom:28px">
+            <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3">
+              <div style="flex:1; background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.12); border-radius:16px; padding:16px 8px; text-align:center">
+                <div style="font-family:'Marcellus',serif; font-size:22px; color:#B08D57">{{ st.val }}</div>
+                <div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(243,233,225,0.6); margin-top:3px">{{ st.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:rgba(246,237,232,0.07); border:1px solid rgba(246,237,232,0.15); border-radius:20px; padding:22px 22px 24px; margin-bottom:28px">
+            <div style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#B08D57; margin-bottom:8px">Continue &middot; Lesson 9 of 28</div>
+            <div style="font-family:'Marcellus',serif; font-size:19px; margin-bottom:14px">Upper Body Waves, Slowed Down</div>
+            <div style="height:5px; background:rgba(246,237,232,0.15); border-radius:100px; overflow:hidden; margin-bottom:16px"><div style="width:32%; height:100%; background:#B08D57"></div></div>
+            <div style="background:#F0DCD3; color:#0F3D33; padding:13px; border-radius:100px; font-size:14px; font-weight:600; text-align:center">Resume &rarr;</div>
+          </div>
+          <h3 style="margin:0 0 14px; font-family:'Marcellus',serif; font-size:19px; font-weight:400">My courses</h3>
+          <sc-for list="{{ myCourses }}" as="c" hint-placeholder-count="4">
+            <div style="padding:14px 2px; border-top:1px solid rgba(246,237,232,0.14)">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px">
+                <span style="font-family:'Marcellus',serif; font-size:15px">{{ c.title }}</span>
+                <span style="font-size:12px; color:#B08D57">{{ c.pct }}%</span>
+              </div>
+              <div style="height:4px; background:rgba(246,237,232,0.14); border-radius:100px; overflow:hidden"><div style="width:{{ c.pctW }}; height:100%; background:{{ c.barColor }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Log in</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+        <div style="min-height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; padding:80px 28px 48px; display:flex; flex-direction:column; background:radial-gradient(120% 60% at 15% 5%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(160deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+          <div style="font-family:'Marcellus',serif; font-size:20px; letter-spacing:0.12em; text-align:center; margin-bottom:48px">E&#8209;MOTION</div>
+          <h2 style="margin:0 0 6px; font-family:'Marcellus',serif; font-size:30px; font-weight:400">Welcome back.</h2>
+          <p style="margin:0 0 32px; font-size:14px; color:rgba(243,233,225,0.55)">The floor missed you.</p>
+          <div style="display:flex; flex-direction:column; gap:16px">
+            <div>
+              <div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(243,233,225,0.6); margin-bottom:6px">Email</div>
+              <div style="padding:15px 16px; border:1px solid rgba(246,237,232,0.2); border-radius:12px; font-size:15px; background:rgba(246,237,232,0.06); color:rgba(243,233,225,0.45)">you@example.com</div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px">
+                <span style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(243,233,225,0.6)">Password</span>
+                <span style="font-size:12px; color:#B08D57">Forgot?</span>
+              </div>
+              <div style="padding:15px 16px; border:1px solid rgba(246,237,232,0.2); border-radius:12px; font-size:15px; background:rgba(246,237,232,0.06); color:rgba(243,233,225,0.45)">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
+            </div>
+            <div style="background:#F0DCD3; color:#0F3D33; padding:16px; border-radius:100px; font-size:15px; font-weight:600; text-align:center; margin-top:6px">Log in</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; margin:28px 0">
+            <div style="flex:1; height:1px; background:rgba(246,237,232,0.15)"></div>
+            <span style="font-size:12px; color:rgba(243,233,225,0.45)">or</span>
+            <div style="flex:1; height:1px; background:rgba(246,237,232,0.15)"></div>
+          </div>
+          <div style="border:1px solid rgba(246,237,232,0.25); padding:14px; border-radius:100px; font-size:14px; text-align:center">Continue with Google</div>
+          <p style="margin:32px 0 0; font-size:13px; color:rgba(243,233,225,0.55); text-align:center">New here? <span style="color:#B08D57; font-weight:500">Create an account</span></p>
+        </div>
+      </x-import>
+    </div>
+  </div>
+
+  <h2 style="margin:0 0 8px; font-family:'Marcellus',serif; font-size:24px; font-weight:400; color:#0F3D33">Landscape</h2>
+  <p style="margin:0 0 40px; font-size:14px; color:#54655D">Rotated layouts — hero and the practice view side by side.</p>
+
+  <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:flex-start">
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Home — landscape</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" width="{{ 874 }}" height="{{ 402 }}" hint-size="874px,402px">
+        <div style="height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:center; padding:56px 48px 40px; background:radial-gradient(120% 80% at 15% 5%, rgba(220,255,240,0.10), rgba(220,255,240,0) 55%), linear-gradient(133deg, #145643 0%, #0E4033 36%, #092E24 70%, #104836 100%)">
+          <div>
+            <p style="margin:0 0 10px; font-size:10px; letter-spacing:0.26em; text-transform:uppercase; color:#B08D57">Hip hop &middot; Kizomba &middot; Bachata &middot; Afrobeats</p>
+            <h2 style="margin:0 0 14px; font-family:'Marcellus',serif; font-size:30px; line-height:1.12; font-weight:400">Learn to move the way music makes you feel.</h2>
+            <div style="display:flex; align-items:center; gap:16px">
+              <div style="background:#F0DCD3; color:#0F3D33; padding:13px 26px; border-radius:100px; font-size:14px; font-weight:600; white-space:nowrap">Start 7 days free</div>
+              <span style="font-size:12px; color:rgba(243,233,225,0.5)">then €29/month</span>
+            </div>
+          </div>
+          <div style="height:100%; min-height:220px"><image-slot id="ml-hero" shape="rounded" radius="18" placeholder="Hero: dancer"></image-slot></div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <span style="font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:#8A968E">Lesson practice — landscape</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" width="{{ 874 }}" height="{{ 402 }}" hint-size="874px,402px">
+        <div style="height:100%; box-sizing:border-box; font-family:'Figtree',sans-serif; color:#F3E9E1; position:relative; background:#07271F">
+          <div style="position:absolute; inset:0"><image-slot id="ml-lesson" shape="rect" placeholder="Lesson video: mirrored view"></image-slot></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; padding:20px 48px 36px; background:linear-gradient(180deg, rgba(7,39,31,0) 0%, rgba(7,39,31,0.85) 100%); pointer-events:none">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px">
+              <div style="font-family:'Marcellus',serif; font-size:17px">Upper Body Waves, Slowed Down</div>
+              <div style="display:flex; gap:14px; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(243,233,225,0.75)">
+                <span style="border:1px solid rgba(246,237,232,0.35); padding:5px 12px; border-radius:100px; color:#B08D57; border-color:#B08D57">Mirrored</span>
+                <span style="border:1px solid rgba(246,237,232,0.35); padding:5px 12px; border-radius:100px">0.75&times;</span>
+                <span style="border:1px solid rgba(246,237,232,0.35); padding:5px 12px; border-radius:100px">Loop</span>
+              </div>
+            </div>
+            <div style="height:4px; background:rgba(246,237,232,0.25); border-radius:100px; overflow:hidden"><div style="width:38%; height:100%; background:#B08D57"></div></div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      styles: [
+        { name: 'Hip hop', slot: 'm-hiphop' }, { name: 'Kizomba', slot: 'm-kizomba' },
+        { name: 'Bachata', slot: 'm-bachata' }, { name: 'Afrobeats', slot: 'm-afro' },
+      ],
+      mCourses: [
+        { num: '01', title: 'Hip Hop Foundations', style: 'Hip hop', lessons: 42 },
+        { num: '02', title: 'Kizomba From Zero', style: 'Kizomba', lessons: 38 },
+        { num: '03', title: 'Bachata Essentials', style: 'Bachata', lessons: 44 },
+        { num: '04', title: 'Afrobeats Grooves', style: 'Afrobeats', lessons: 34 },
+        { num: '05', title: 'Musicality & How to Practice', style: 'All styles', lessons: 18 },
+      ],
+      startStyles: [
+        { glyph: 'I', name: 'Hip hop', hint: 'Groove, bounce & freestyle' },
+        { glyph: 'II', name: 'Kizomba', hint: 'Connection & flow' },
+        { glyph: 'III', name: 'Bachata', hint: 'Sensual waves & footwork' },
+        { glyph: 'IV', name: 'Afrobeats', hint: 'Energy, legwork & joy' },
+      ],
+      stats: [
+        { val: '14', label: 'Day streak' }, { val: '79', label: 'Lessons' }, { val: '2', label: 'Finished' },
+      ],
+      myCourses: [
+        { title: 'Sensual Bachata Body Movement', pct: 32 },
+        { title: 'Bachata Essentials', pct: 100 },
+        { title: 'Kizomba From Zero', pct: 55 },
+        { title: 'Musicality & How to Practice', pct: 28 },
+      ].map(c => ({ ...c, pctW: c.pct + '%', barColor: c.pct === 100 ? '#B08D57' : '#3D9B7C' })),
+    };
+  }
+}
+</script>
+</body>
+</html>
