@@ -131,13 +131,13 @@ export default async function DashboardPage() {
                 <div
                   className={cx(
                     "mx-auto mb-1.5 flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold",
-                    day.practiced ? "bg-moss text-gold" : "bg-moss/[0.08] text-ink-faint",
+                    day.practiced ? "bg-moss text-gold" : "bg-moss/[0.08] text-ink-muted",
                     day.is_today && !day.practiced && "ring-1 ring-gold",
                   )}
                 >
                   {day.practiced ? "✓" : "·"}
                 </div>
-                <div className="text-[11px] tracking-wide text-ink-faint">{day.label}</div>
+                <div className="text-[11px] tracking-wide text-ink-muted">{day.label}</div>
               </div>
             ))}
           </div>
@@ -152,19 +152,19 @@ export default async function DashboardPage() {
           <h3 className="mb-5 font-display text-[22px] text-moss">Account</h3>
           <dl className="flex flex-col gap-3.5 text-[15px]">
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-faint">Plan</dt>
+              <dt className="text-ink-muted">Plan</dt>
               <dd className="text-right">
                 {user.tier === "member" ? "E-motion Membership · €29/mo" : "No membership"}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-faint">Status</dt>
+              <dt className="text-ink-muted">Status</dt>
               <dd className="text-right capitalize">
                 {user.subscription?.status.replace("_", " ") ?? "—"}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-faint">Email</dt>
+              <dt className="text-ink-muted">Email</dt>
               <dd className="min-w-0 break-all text-right">{user.email}</dd>
             </div>
           </dl>

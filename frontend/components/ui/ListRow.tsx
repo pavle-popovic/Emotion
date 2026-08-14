@@ -66,7 +66,7 @@ export function ListRow({
           <span
             className={cx(
               "mt-1 block text-sm",
-              cream ? "text-ink-faint" : "text-on-velvet-faint",
+              cream ? "text-ink-muted" : "text-on-velvet-faint",
             )}
           >
             {subtitle}

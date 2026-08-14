@@ -32,7 +32,7 @@ export default async function RegisterPage() {
       <h1 className="mb-2.5 mt-0 font-display text-[38px] text-moss lg:mt-11">
         Start your 7 free days.
       </h1>
-      <p className="mb-10 text-base text-ink-faint">
+      <p className="mb-10 text-base text-ink-muted">
         Then €29/month. Cancel anytime, two clicks.
       </p>
 
@@ -43,7 +43,7 @@ export default async function RegisterPage() {
         includeName
       />
 
-      <p className="mt-5 text-center text-[13px] leading-relaxed text-ink-faint">
+      <p className="mt-5 text-center text-[13px] leading-relaxed text-ink-muted">
         By continuing you agree to our Terms &amp; Privacy Policy.
       </p>
       <p className="mt-8 text-center text-[15px] text-ink-muted">

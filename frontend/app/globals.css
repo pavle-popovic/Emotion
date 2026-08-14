@@ -43,11 +43,17 @@
   --warn-on: #e4a984;
 
   /* On-velvet text -------------------------------------------------------- */
+  /* Alphas are set by contrast, not by eye. Measured against the LIGHTEST
+     gradient stop (#145643), which is the worst case and sits top-left where
+     the hero copy lands:
+       0.50 (the brief's value) -> 3.02:1  fails
+       0.70 (secondary)         -> 4.41:1  fails, marginally
+       0.72                     -> 4.56:1  passes
+     So faint is 0.72 and secondary 0.85, keeping a visible three-step ladder
+     against primary at 1.0. */
   --on-velvet: #f3e9e1;
-  --on-velvet-2: rgba(243, 233, 225, 0.7);
-  /* Faint text is 0.62, not the 0.5 in the brief: at 13px on the darkest
-     gradient stop 0.5 measured 4.1:1, below the 4.5:1 floor. */
-  --on-velvet-faint: rgba(243, 233, 225, 0.62);
+  --on-velvet-2: rgba(243, 233, 225, 0.85);
+  --on-velvet-faint: rgba(243, 233, 225, 0.72);
 
   /* Hairlines and glass fills --------------------------------------------- */
   --hairline: rgba(246, 237, 232, 0.12);

@@ -24,7 +24,7 @@ export default async function LoginPage() {
       }
     >
       <h1 className="mb-2.5 mt-0 font-display text-[38px] text-moss lg:mt-11">Welcome back.</h1>
-      <p className="mb-10 text-base text-ink-faint">The floor missed you.</p>
+      <p className="mb-10 text-base text-ink-muted">The floor missed you.</p>
 
       <AuthForm action={login} submitLabel="Log in" pendingLabel="Logging in..." />
 

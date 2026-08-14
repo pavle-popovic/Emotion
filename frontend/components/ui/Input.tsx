@@ -4,7 +4,7 @@ type Tone = "cream" | "velvet";
 
 const FIELD: Record<Tone, string> = {
   // On cream panels (auth, admin forms).
-  cream: "border-ink-hairline bg-white text-ink placeholder:text-ink-faint",
+  cream: "border-ink-hairline bg-white text-ink placeholder:text-ink-muted",
   // On velvet surfaces.
   velvet: "border-hairline-strong bg-glass text-on-velvet placeholder:text-on-velvet-faint",
 };

@@ -87,7 +87,7 @@ export default async function HomePage() {
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="font-display text-[26px]">{stat.value}</div>
-                  <div className="text-[12px] uppercase tracking-wide text-ink-faint">
+                  <div className="text-[12px] uppercase tracking-wide text-ink-muted">
                     {stat.label}
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default async function HomePage() {
             </div>
             <div className="font-display text-[64px] leading-none text-moss">
               {PRICE}
-              <span className="text-[20px] text-ink-faint">/month</span>
+              <span className="text-[20px] text-ink-muted">/month</span>
             </div>
             <div className="my-9 h-px bg-ink-hairline" />
             <ul className="flex flex-col gap-4 text-left text-base">

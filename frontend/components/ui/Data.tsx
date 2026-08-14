@@ -63,7 +63,7 @@ export function StatTile({
       <div
         className={cx(
           "mt-1 text-[12px] uppercase tracking-wide",
-          tone === "glass" ? "text-on-velvet-2" : "text-ink-faint",
+          tone === "glass" ? "text-on-velvet-2" : "text-ink-muted",
         )}
       >
         {label}
