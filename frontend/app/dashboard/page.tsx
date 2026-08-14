@@ -123,14 +123,16 @@ export default async function DashboardPage() {
 
       {/* This week + account */}
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-[24px] bg-cream-blush px-9 py-9 text-ink">
+        <div className="rounded-[24px] bg-cream-blush px-6 py-8 text-ink sm:px-9 sm:py-9">
           <h3 className="mb-5 font-display text-[22px] text-moss">This week</h3>
-          <div className="mb-5 flex gap-2.5">
+          {/* Seven 44px circles plus padding overflow a 390px viewport, and these
+              are read-only markers rather than touch targets, so they shrink. */}
+          <div className="mb-5 flex gap-1.5 sm:gap-2.5">
             {week.map((day, index) => (
-              <div key={index} className="flex-1 text-center">
+              <div key={index} className="min-w-0 flex-1 text-center">
                 <div
                   className={cx(
-                    "mx-auto mb-1.5 flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold",
+                    "mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold sm:h-11 sm:w-11",
                     day.practiced ? "bg-moss text-gold" : "bg-moss/[0.08] text-ink-muted",
                     day.is_today && !day.practiced && "ring-1 ring-gold",
                   )}

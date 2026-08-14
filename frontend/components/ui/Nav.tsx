@@ -70,7 +70,11 @@ export function Nav({ user }: { user: User | null }) {
                   Admin
                 </Link>
               )}
-              <Link href="/account" aria-label="Account">
+              <Link
+                href="/account"
+                aria-label="Account"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center"
+              >
                 <Avatar name={user.full_name || user.email} />
               </Link>
             </>
