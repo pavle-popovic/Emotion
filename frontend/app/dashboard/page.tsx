@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { ProgressBar } from "@/components/ProgressBar";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SubmitButton } from "@/components/SubmitButton";
-import { startTrial } from "@/lib/actions";
+import { PageShell } from "@/components/PageShell";
+import { StartTrialCard } from "@/components/dashboard/StartTrialCard";
+import { Avatar, Button, EmptyState, ProgressBar, StatTile } from "@/components/ui";
+import { cx } from "@/lib/cx";
 import { getCurrentUser, getDashboard } from "@/lib/api";
 import { STYLE_LABELS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+
+function memberSince(iso: string | null): string | null {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+}
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -18,111 +23,158 @@ export default async function DashboardPage() {
   const stats = data?.stats ?? { lessons_completed: 0, courses_completed: 0, day_streak: 0 };
   const cont = data?.continue_card ?? null;
   const courses = data?.courses ?? [];
-  const initials = (user.full_name || user.email).trim().charAt(0).toUpperCase();
+  const week = data?.week ?? [];
+  const practiceDays = data?.practice_days_this_week ?? 0;
+
+  const since = memberSince(user.created_at);
+  const subtitle = [
+    since && `Member since ${since}`,
+    user.preferred_style ? STYLE_LABELS[user.preferred_style] : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <>
-      <SiteHeader user={user} />
+    <PageShell user={user} width="panel">
+      {/* Identity + stats */}
+      <header className="flex flex-wrap items-center gap-10 py-14">
+        <Avatar name={user.full_name || user.email} size={112} />
+        <div className="min-w-0 flex-1">
+          <h1 className="mb-2 break-words font-display text-[clamp(28px,3.6vw,38px)] text-cream-surface">
+            {user.full_name || "Dancer"}
+          </h1>
+          <p className="text-[15px] text-on-velvet-2">{subtitle || "Pick a style to begin"}</p>
+        </div>
+        <div className="grid w-full grid-cols-3 gap-5 sm:w-auto">
+          <StatTile value={stats.day_streak} label="Day streak" className="sm:min-w-[110px]" />
+          <StatTile value={stats.lessons_completed} label="Lessons done" className="sm:min-w-[110px]" />
+          <StatTile value={stats.courses_completed} label="Courses finished" className="sm:min-w-[110px]" />
+        </div>
+      </header>
 
-      <main className="mx-auto max-w-3xl px-5 pb-24">
-        {/* Identity */}
-        <section className="flex items-center gap-[18px] px-1 pb-7 pt-3">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-cream/20 bg-cream/10 font-display text-2xl text-gold">
-            {initials}
-          </div>
-          <div className="min-w-0">
-            <div className="break-words font-display text-2xl">{user.full_name || "Dancer"}</div>
-            <div className="mt-0.5 text-[13px] text-cream/60">
-              {user.preferred_style ? STYLE_LABELS[user.preferred_style] : "Pick a style to begin"}
-            </div>
-          </div>
-        </section>
+      {user.tier === "free" && user.role !== "admin" && <StartTrialCard />}
 
-        {/* Membership prompt. Admins bypass tier gating entirely, so selling
-            them a membership would be nonsense. */}
-        {user.tier === "free" && user.role !== "admin" && (
-          <section className="card-light mb-7 px-6 py-6">
-            <p className="mb-1.5 text-[11px] uppercase tracking-label text-gold">Membership</p>
-            <h2 className="mb-2 font-display text-xl font-normal text-moss">
-              Unlock every course.
-            </h2>
-            <p className="mb-4 text-sm text-sage">
-              Seven days free, then €29/month. Cancel anytime.
-            </p>
-            <form action={startTrial} className="max-w-xs">
-              <SubmitButton className="btn-dark" pendingLabel="Starting...">
-                Start 7 days free
-              </SubmitButton>
-            </form>
-          </section>
-        )}
-
-        {/* Stats */}
-        <section className="mb-7 flex gap-3">
-          {[
-            { val: stats.day_streak, label: "Day streak" },
-            { val: stats.lessons_completed, label: "Lessons" },
-            { val: stats.courses_completed, label: "Finished" },
-          ].map((stat) => (
-            <div key={stat.label} className="card-dark flex-1 px-2 py-4 text-center">
-              <div className="font-display text-[22px] text-gold">{stat.val}</div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.08em] text-cream/60">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* Continue */}
-        {cont && (
-          <section className="card-dark mb-7 rounded-[20px] px-[22px] pb-6 pt-[22px]">
-            <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-gold">
-              Continue &middot; Lesson {cont.position} of {cont.total_in_course}
-            </div>
-            <div className="mb-3.5 font-display text-[19px]">{cont.lesson_title}</div>
-            <ProgressBar percent={cont.progress_percent} className="mb-4" height="h-[5px]" />
-            <Link
-              href={`/courses/${cont.course_slug}/lessons/${cont.lesson_id}`}
-              className="btn-cta py-3.5 text-sm"
-            >
-              Resume &rarr;
-            </Link>
-          </section>
-        )}
-
-        {/* My courses */}
-        <section>
-          <h2 className="mb-3.5 font-display text-[19px] font-normal">My courses</h2>
-          {courses.length === 0 ? (
-            <div className="card-dark px-5 py-8 text-center">
-              <p className="mb-4 text-sm text-cream/60">
-                You have not started a course yet.
+      {/* Continue */}
+      {cont && (
+        <section className="mb-16">
+          <h2 className="mb-6 font-display text-[26px] text-on-velvet">
+            Continue where you left off
+          </h2>
+          <div className="bg-velvet flex flex-wrap items-center gap-10 rounded-[24px] border border-hairline-strong px-8 py-9 sm:px-11">
+            <div className="min-w-[240px] flex-1">
+              <p className="mb-2.5 text-[12px] uppercase tracking-label text-gold">
+                {cont.course_title} &middot; Lesson {cont.position} of {cont.total_in_course}
               </p>
-              <Link href="/courses" className="btn-ghost mx-auto max-w-[200px]">
-                Browse the catalog
-              </Link>
+              <p className="mb-5 font-display text-[28px] text-cream-surface">{cont.lesson_title}</p>
+              <ProgressBar
+                percent={cont.progress_percent}
+                className="max-w-[420px]"
+                label="Course progress"
+              />
+              <p className="mt-2 text-[13px] text-on-velvet-faint">
+                {cont.progress_percent}% complete
+              </p>
             </div>
-          ) : (
-            <ul>
-              {courses.map((course) => (
-                <li key={course.id} className="border-t border-cream/[0.14] px-0.5 py-3.5">
-                  <Link href={`/courses/${course.slug}`} className="group block">
-                    <div className="mb-2 flex items-baseline justify-between gap-4">
-                      <span className="min-w-0 break-words font-display text-[15px] transition group-hover:text-gold">
-                        {course.title}
-                      </span>
-                      <span className="shrink-0 text-xs text-gold">
-                        {course.progress_percent}%
-                      </span>
-                    </div>
-                    <ProgressBar percent={course.progress_percent} height="h-1" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+            <Button href={`/courses/${cont.course_slug}/lessons/${cont.lesson_id}`} size="lg">
+              Resume &rarr;
+            </Button>
+          </div>
         </section>
-      </main>
-    </>
+      )}
+
+      {/* My courses */}
+      <section className="mb-16">
+        <h2 className="mb-6 font-display text-[26px] text-on-velvet">My courses</h2>
+        {courses.length === 0 ? (
+          <EmptyState
+            title="You have not started a course yet."
+            body="Pick any course and the first lesson is one tap away."
+            action={
+              <Button href="/courses" variant="ghost">
+                Browse the catalog
+              </Button>
+            }
+          />
+        ) : (
+          <ul className="flex flex-col">
+            {courses.map((course) => (
+              <li key={course.id}>
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="grid grid-cols-1 items-center gap-4 border-t border-hairline-strong px-2 py-6 transition duration-[--dur] ease-ease hover:bg-gold/[0.06] sm:grid-cols-[1fr_auto_220px_auto]"
+                >
+                  <div className="min-w-0">
+                    <div className="break-words font-display text-[19px] text-on-velvet">
+                      {course.title}
+                    </div>
+                    <div className="mt-1 text-[13px] text-on-velvet-faint">
+                      {course.style_label} &middot; {course.lesson_count} lessons
+                    </div>
+                  </div>
+                  <span className="text-sm text-on-velvet-2">{course.completed_lessons} done</span>
+                  <ProgressBar percent={course.progress_percent} label={`${course.title} progress`} />
+                  <span className="text-sm text-gold sm:text-right">{course.progress_percent}%</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* This week + account */}
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-[24px] bg-cream-blush px-9 py-9 text-ink">
+          <h3 className="mb-5 font-display text-[22px] text-moss">This week</h3>
+          <div className="mb-5 flex gap-2.5">
+            {week.map((day, index) => (
+              <div key={index} className="flex-1 text-center">
+                <div
+                  className={cx(
+                    "mx-auto mb-1.5 flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold",
+                    day.practiced ? "bg-moss text-gold" : "bg-moss/[0.08] text-ink-faint",
+                    day.is_today && !day.practiced && "ring-1 ring-gold",
+                  )}
+                >
+                  {day.practiced ? "✓" : "·"}
+                </div>
+                <div className="text-[11px] tracking-wide text-ink-faint">{day.label}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-ink-muted">
+            {practiceDays === 0
+              ? "No practice logged yet this week."
+              : `${practiceDays} practice ${practiceDays === 1 ? "day" : "days"} this week.`}
+          </p>
+        </div>
+
+        <div className="rounded-[24px] border border-ink-hairline bg-white px-9 py-9 text-ink">
+          <h3 className="mb-5 font-display text-[22px] text-moss">Account</h3>
+          <dl className="flex flex-col gap-3.5 text-[15px]">
+            <div className="flex justify-between gap-4">
+              <dt className="text-ink-faint">Plan</dt>
+              <dd className="text-right">
+                {user.tier === "member" ? "E-motion Membership · €29/mo" : "No membership"}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-ink-faint">Status</dt>
+              <dd className="text-right capitalize">
+                {user.subscription?.status.replace("_", " ") ?? "—"}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-ink-faint">Email</dt>
+              <dd className="min-w-0 break-all text-right">{user.email}</dd>
+            </div>
+          </dl>
+          <div className="mt-7">
+            <Button href="/account" variant="link">
+              Manage account
+            </Button>
+          </div>
+        </div>
+      </section>
+    </PageShell>
   );
 }

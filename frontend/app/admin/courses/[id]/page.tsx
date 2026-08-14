@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { AdminCourseSettings } from "@/components/admin/AdminCourseSettings";
 import { VideoUploader } from "@/components/admin/VideoUploader";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SubmitButton } from "@/components/SubmitButton";
+import { PageShell } from "@/components/PageShell";
+import { Badge, Button } from "@/components/ui";
 import {
   createLesson,
   createModule,
@@ -13,22 +14,22 @@ import {
   getCourse,
   moveLesson,
   moveModule,
-  updateCourse,
 } from "@/lib/admin-actions";
 import { getCurrentUser } from "@/lib/api";
-import { STYLE_LABELS, STYLE_ORDER } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 /** Single-button form. Ordering is a server round trip, so it cannot be a link. */
-function Reorder({
+function IconForm({
   action,
   label,
   glyph,
+  danger = false,
 }: {
   action: () => Promise<void>;
   label: string;
   glyph: string;
+  danger?: boolean;
 }) {
   return (
     <form action={action}>
@@ -36,7 +37,11 @@ function Reorder({
         type="submit"
         aria-label={label}
         title={label}
-        className="rounded-md border border-cream/20 px-2 py-0.5 text-xs text-cream/60 transition hover:border-gold hover:text-gold"
+        className={
+          danger
+            ? "min-h-[44px] px-3 text-[13px] text-on-velvet-faint transition duration-[--dur] ease-ease hover:text-warn-on"
+            : "flex h-11 w-11 items-center justify-center rounded-input border border-hairline-strong text-[13px] text-on-velvet-2 transition duration-[--dur] ease-ease hover:border-gold hover:text-gold"
+        }
       >
         {glyph}
       </button>
@@ -56,197 +61,135 @@ export default async function AdminCoursePage({ params }: { params: { id: string
   if (!course) notFound();
 
   return (
-    <>
-      <SiteHeader user={user} />
+    <PageShell user={user} width="panel">
+      <Link
+        href="/admin"
+        className="inline-flex min-h-[44px] items-center text-[13px] text-on-velvet-faint hover:text-gold"
+      >
+        &larr; Catalog
+      </Link>
 
-      <main className="mx-auto max-w-4xl px-6 pb-24">
-        <Link href="/admin" className="text-xs text-cream/50 transition hover:text-gold">
-          &larr; Catalog
-        </Link>
-
-        <div className="mb-6 mt-3 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-display text-3xl font-normal">{course.title}</h1>
-          <Link
-            href={`/courses/${course.slug}`}
-            className="text-xs text-cream/50 transition hover:text-gold"
-          >
+      <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-display text-[clamp(28px,3.6vw,38px)] text-on-velvet">
+          {course.title}
+        </h1>
+        <div className="flex items-center gap-4">
+          <Badge tone={course.is_published ? "live" : "draft"}>
+            {course.is_published ? "Live" : "Draft"}
+          </Badge>
+          <Button href={`/courses/${course.slug}`} variant="link">
             View public page &rarr;
-          </Link>
+          </Button>
         </div>
+      </div>
 
-        {/* Settings */}
-        <form action={updateCourse.bind(null, course.id)} className="card-dark mb-10 grid gap-3 p-5 sm:grid-cols-2">
-          <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.08em] text-cream/60">
-              Title
-            </span>
-            <input name="title" defaultValue={course.title} className="field" />
-          </label>
+      <AdminCourseSettings course={course} />
 
-          <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.08em] text-cream/60">
-              Style
-            </span>
-            <select name="style" defaultValue={course.style} className="field">
-              {[...STYLE_ORDER, "all_styles" as const].map((style) => (
-                <option key={style} value={style} className="bg-moss-900">
-                  {STYLE_LABELS[style]}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block sm:col-span-2">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.08em] text-cream/60">
-              Summary
-            </span>
-            <input name="summary" defaultValue={course.summary} className="field" />
-          </label>
-
-          <label className="block sm:col-span-2">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.08em] text-cream/60">
-              Description
-            </span>
-            <textarea name="description" defaultValue={course.description} rows={4} className="field" />
-          </label>
-
-          <label className="block">
-            <span className="mb-1.5 block text-[11px] uppercase tracking-[0.08em] text-cream/60">
-              Access
-            </span>
-            <select name="required_tier" defaultValue={course.required_tier} className="field">
-              <option value="member" className="bg-moss-900">Members only</option>
-              <option value="free" className="bg-moss-900">Free</option>
-            </select>
-          </label>
-
-          <label className="flex items-center gap-3 self-end pb-3">
-            <input
-              type="checkbox"
-              name="is_published"
-              defaultChecked={course.is_published}
-              className="h-4 w-4 accent-[#B08D57]"
-            />
-            <span className="text-sm text-cream/80">Published (visible in the catalog)</span>
-          </label>
-
-          <div className="sm:col-span-2 sm:max-w-[200px]">
-            <SubmitButton pendingLabel="Saving...">Save changes</SubmitButton>
-          </div>
-        </form>
-
-        {/* Structure */}
-        <h2 className="mb-3 font-display text-xl font-normal">Modules</h2>
-        <div className="mb-6 flex flex-col gap-5">
-          {course.modules.map((module) => (
-            <section key={module.id} className="card-dark p-5">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <h3 className="min-w-0 flex-1 font-display text-lg">{module.title}</h3>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <Reorder
-                    action={moveModule.bind(null, course.id, module.id, -1)}
-                    label="Move module up"
-                    glyph="↑"
-                  />
-                  <Reorder
-                    action={moveModule.bind(null, course.id, module.id, 1)}
-                    label="Move module down"
-                    glyph="↓"
-                  />
-                  <form action={deleteModule.bind(null, module.id, course.id)}>
-                    <button
-                      type="submit"
-                      className="px-2 text-xs text-cream/40 transition hover:text-red-300"
-                    >
-                      Delete
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              <ul className="mb-4 flex flex-col divide-y divide-cream/10">
-                {module.lessons.map((lesson) => (
-                  <li key={lesson.id} className="py-3">
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                      <span className="min-w-0 flex-1 break-words text-sm">
-                        {lesson.title}
-                        {lesson.is_preview && (
-                          <span className="ml-2 text-[10px] uppercase tracking-[0.1em] text-gold">
-                            Free preview
-                          </span>
-                        )}
-                      </span>
-                      <div className="flex shrink-0 items-center gap-1.5">
-                        <Reorder
-                          action={moveLesson.bind(null, course.id, module.id, lesson.id, -1)}
-                          label="Move lesson up"
-                          glyph="↑"
-                        />
-                        <Reorder
-                          action={moveLesson.bind(null, course.id, module.id, lesson.id, 1)}
-                          label="Move lesson down"
-                          glyph="↓"
-                        />
-                        <form action={deleteLesson.bind(null, lesson.id, course.id)}>
-                          <button
-                            type="submit"
-                            className="px-2 text-xs text-cream/40 transition hover:text-red-300"
-                          >
-                            Delete
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                    <VideoUploader lesson={lesson} courseId={course.id} />
-                  </li>
-                ))}
-                {module.lessons.length === 0 && (
-                  <li className="py-3 text-xs text-cream/40">No lessons yet.</li>
-                )}
-              </ul>
-
-              <form
-                action={createLesson.bind(null, module.id, course.id)}
-                className="flex flex-wrap gap-2"
-              >
-                <input
-                  name="title"
-                  required
-                  placeholder="New lesson title"
-                  className="field flex-1 !py-2.5 text-sm"
+      <h2 className="mb-5 font-display text-[22px] text-on-velvet">Modules</h2>
+      <div className="mb-8 flex flex-col gap-6">
+        {course.modules.map((module) => (
+          <section key={module.id} className="rounded-card border border-hairline bg-glass p-6">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h3 className="min-w-0 flex-1 font-display text-lg text-on-velvet">{module.title}</h3>
+              <div className="flex shrink-0 items-center gap-2">
+                <IconForm
+                  action={moveModule.bind(null, course.id, module.id, -1)}
+                  label="Move module up"
+                  glyph="↑"
                 />
-                <SubmitButton
-                  className="rounded-pill border border-cream/25 px-4 py-2 text-xs transition hover:border-gold hover:text-gold"
-                  pendingLabel="Adding..."
-                >
-                  Add lesson
-                </SubmitButton>
-              </form>
-            </section>
-          ))}
-        </div>
+                <IconForm
+                  action={moveModule.bind(null, course.id, module.id, 1)}
+                  label="Move module down"
+                  glyph="↓"
+                />
+                <IconForm
+                  action={deleteModule.bind(null, module.id, course.id)}
+                  label="Delete module"
+                  glyph="Delete"
+                  danger
+                />
+              </div>
+            </div>
 
-        <form action={createModule.bind(null, course.id)} className="mb-14 flex flex-wrap gap-2">
-          <input
-            name="title"
-            required
-            placeholder="New module title"
-            className="field flex-1 !py-2.5 text-sm"
-          />
-          <SubmitButton
-            className="rounded-pill border border-cream/25 px-4 py-2 text-xs transition hover:border-gold hover:text-gold"
-            pendingLabel="Adding..."
-          >
-            Add module
-          </SubmitButton>
-        </form>
+            <ul className="mb-5 flex flex-col divide-y divide-hairline">
+              {module.lessons.map((lesson) => (
+                <li key={lesson.id} className="py-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <span className="min-w-0 flex-1 break-words text-sm text-on-velvet">
+                      {lesson.title}
+                      {lesson.is_preview && (
+                        <Badge tone="trial" className="ml-3">
+                          Free preview
+                        </Badge>
+                      )}
+                    </span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <IconForm
+                        action={moveLesson.bind(null, course.id, module.id, lesson.id, -1)}
+                        label="Move lesson up"
+                        glyph="↑"
+                      />
+                      <IconForm
+                        action={moveLesson.bind(null, course.id, module.id, lesson.id, 1)}
+                        label="Move lesson down"
+                        glyph="↓"
+                      />
+                      <IconForm
+                        action={deleteLesson.bind(null, lesson.id, course.id)}
+                        label="Delete lesson"
+                        glyph="Delete"
+                        danger
+                      />
+                    </div>
+                  </div>
+                  <VideoUploader lesson={lesson} courseId={course.id} />
+                </li>
+              ))}
+              {module.lessons.length === 0 && (
+                <li className="py-4 text-[13px] text-on-velvet-faint">No lessons yet.</li>
+              )}
+            </ul>
 
-        <form action={deleteCourse.bind(null, course.id)} className="border-t border-cream/10 pt-6">
-          <button type="submit" className="text-xs text-red-300/70 transition hover:text-red-300">
-            Delete this course and everything in it
-          </button>
-        </form>
-      </main>
-    </>
+            <form
+              action={createLesson.bind(null, module.id, course.id)}
+              className="flex flex-wrap items-end gap-3"
+            >
+              <input
+                name="title"
+                required
+                aria-label="New lesson title"
+                placeholder="New lesson title"
+                className="min-h-[44px] flex-1 rounded-input border border-hairline-strong bg-glass px-4 text-sm text-on-velvet outline-none placeholder:text-on-velvet-faint"
+              />
+              <Button type="submit" variant="ghost" size="sm">
+                Add lesson
+              </Button>
+            </form>
+          </section>
+        ))}
+      </div>
+
+      <form action={createModule.bind(null, course.id)} className="mb-14 flex flex-wrap items-end gap-3">
+        <input
+          name="title"
+          required
+          aria-label="New module title"
+          placeholder="New module title"
+          className="min-h-[44px] flex-1 rounded-input border border-hairline-strong bg-glass px-4 text-sm text-on-velvet outline-none placeholder:text-on-velvet-faint"
+        />
+        <Button type="submit" variant="ghost" size="sm">
+          Add module
+        </Button>
+      </form>
+
+      <form action={deleteCourse.bind(null, course.id)} className="border-t border-hairline pt-8">
+        <button
+          type="submit"
+          className="min-h-[44px] text-[13px] text-warn-on/70 transition duration-[--dur] ease-ease hover:text-warn-on"
+        >
+          Delete this course and everything in it
+        </button>
+      </form>
+    </PageShell>
   );
 }

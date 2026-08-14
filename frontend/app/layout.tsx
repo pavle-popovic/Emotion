@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Figtree, Marcellus } from "next/font/google";
 
+import { TOKEN_HEX } from "@/lib/tokens";
+
 import "./globals.css";
 
 const display = Marcellus({
@@ -24,13 +26,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#092E24",
+  themeColor: TOKEN_HEX.moss900,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body className="bg-emotion min-h-full">{children}</body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

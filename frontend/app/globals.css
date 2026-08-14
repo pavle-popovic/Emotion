@@ -2,6 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   E-motion design tokens — the single source of truth.
+
+   Raw hex, one-off shadows and off-scale spacing must not appear anywhere else
+   in the app. Everything below is mirrored into tailwind.config.ts so
+   `bg-cream-surface`, `text-gold`, `shadow-panel` etc. resolve to these values.
+   ========================================================================== */
+
+:root {
+  /* Surfaces -------------------------------------------------------------- */
+  --velvet: radial-gradient(120% 80% at 15% 5%, rgba(220, 255, 240, 0.1) 0%, rgba(220, 255, 240, 0) 55%),
+    radial-gradient(90% 65% at 82% 92%, rgba(236, 255, 246, 0.07) 0%, rgba(236, 255, 246, 0) 60%),
+    radial-gradient(70% 50% at 60% 50%, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0) 72%),
+    linear-gradient(133deg, #145643 0%, #0e4033 36%, #092e24 70%, #104836 100%);
+
+  /* Greens ---------------------------------------------------------------- */
+  --moss: #0f3d33;
+  --moss-600: #104836;
+  --moss-700: #145643;
+  --moss-800: #0e4033;
+  --moss-900: #092e24;
+  --video: #061f19;
+  --jade: #3d9b7c;
+  --jade-on: #9fe3c6;
+
+  /* Secondary (cream / blush panels) -------------------------------------- */
+  --cream: #f3e9e1;
+  --cream-surface: #f6ede8;
+  --cream-blush: #f0dcd3;
+  --ink: #21302a;
+  --ink-muted: #54655d;
+  --ink-faint: #8a968e;
+
+  /* Accent ---------------------------------------------------------------- */
+  --gold: #b08d57;
+
+  /* The one warning colour, used only for dunning/failed states. */
+  --warn: #a0522d;
+  --warn-on: #e4a984;
+
+  /* On-velvet text -------------------------------------------------------- */
+  --on-velvet: #f3e9e1;
+  --on-velvet-2: rgba(243, 233, 225, 0.7);
+  /* Faint text is 0.62, not the 0.5 in the brief: at 13px on the darkest
+     gradient stop 0.5 measured 4.1:1, below the 4.5:1 floor. */
+  --on-velvet-faint: rgba(243, 233, 225, 0.62);
+
+  /* Hairlines and glass fills --------------------------------------------- */
+  --hairline: rgba(246, 237, 232, 0.12);
+  --hairline-strong: rgba(246, 237, 232, 0.18);
+  --glass: rgba(246, 237, 232, 0.06);
+  --glass-hover: rgba(246, 237, 232, 0.1);
+  --glass-strong: rgba(246, 237, 232, 0.09);
+  --ink-hairline: rgba(15, 61, 51, 0.12);
+
+  /* Elevation — only two ---------------------------------------------------*/
+  --shadow-raised: 0 24px 48px rgba(0, 0, 0, 0.3);
+  --shadow-panel: 0 40px 80px rgba(0, 0, 0, 0.3);
+
+  /* Motion ---------------------------------------------------------------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 170ms;
+}
+
 @layer base {
   html,
   body {
@@ -9,57 +73,64 @@
   }
 
   body {
-    @apply bg-moss-900 text-cream antialiased;
+    background: var(--velvet);
+    background-attachment: fixed;
+    @apply text-on-velvet antialiased;
   }
 
-  /* Inputs inherit the dark surface treatment everywhere. */
-  input,
-  select,
-  textarea {
-    @apply font-sans;
+  /* Marcellus has one weight. Never let a heading synthesise bold. */
+  h1,
+  h2,
+  h3 {
+    font-weight: 400;
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  /* One focus treatment everywhere, including keyboard users inside dark and
+     cream surfaces alike. */
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
-  /* The signature E-motion backdrop: two soft highlights over a green gradient.
-     Used on every full-bleed dark surface so the screens feel like one room. */
-  .bg-emotion {
-    background:
-      radial-gradient(120% 60% at 15% 5%, rgba(220, 255, 240, 0.1), rgba(220, 255, 240, 0) 55%),
-      radial-gradient(90% 45% at 82% 95%, rgba(236, 255, 246, 0.07), rgba(236, 255, 246, 0) 60%),
-      linear-gradient(160deg, #145643 0%, #0e4033 36%, #092e24 70%, #104836 100%);
+  /* Panels that repeat the page background (auth sides, nested cards). */
+  .bg-velvet {
+    background: var(--velvet);
   }
 
-  .label-caps {
-    @apply text-[11px] uppercase tracking-label text-gold;
+  .hairline-t {
+    border-top: 1px solid var(--hairline);
   }
 
-  .field {
-    @apply w-full rounded-xl border border-cream/20 bg-cream/[0.06] px-4 py-[15px] text-[15px]
-           text-cream placeholder:text-cream/45 outline-none transition
-           focus:border-gold focus:bg-cream/10;
+  /* Skeleton shimmer built from the glass fill, per the loading-state rule. */
+  .skeleton {
+    background: linear-gradient(90deg, var(--glass) 25%, var(--glass-hover) 37%, var(--glass) 63%);
+    background-size: 400% 100%;
+    animation: skeleton 1.4s ease-in-out infinite;
   }
 
-  .btn-cta {
-    @apply block w-full rounded-pill bg-cream-cta px-6 py-4 text-center text-[15px] font-semibold
-           text-moss transition hover:bg-cream disabled:cursor-not-allowed disabled:opacity-60;
-  }
-
-  .btn-dark {
-    @apply block w-full rounded-pill bg-moss px-6 py-[15px] text-center text-[15px] font-semibold
-           text-cream transition hover:bg-moss-800;
-  }
-
-  .btn-ghost {
-    @apply block w-full rounded-pill border border-cream/25 px-6 py-3.5 text-center text-sm
-           text-cream transition hover:border-gold hover:text-gold;
-  }
-
-  .card-light {
-    @apply rounded-3xl bg-cream-card text-ink;
-  }
-
-  .card-dark {
-    @apply rounded-2xl border border-cream/[0.15] bg-cream/[0.07];
+  @keyframes skeleton {
+    from {
+      background-position: 100% 50%;
+    }
+    to {
+      background-position: 0 50%;
+    }
   }
 }

@@ -90,14 +90,14 @@ export function VideoUploader({
   if (phase === "ready" && playbackId) {
     return (
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="rounded-pill border border-jade bg-jade/20 px-3 py-1 text-[#9FE3C6]">
+        <span className="rounded-pill border border-jade bg-jade/20 px-3 py-1 text-jade-on">
           ✓ Video ready
         </span>
-        <code className="text-cream/45">{playbackId}</code>
+        <code className="text-on-velvet-faint">{playbackId}</code>
         <button
           type="button"
           onClick={onRemove}
-          className="text-cream/50 underline-offset-2 transition hover:text-red-300 hover:underline"
+          className="min-h-[44px] text-on-velvet-faint underline-offset-2 transition duration-[--dur] ease-ease hover:text-warn-on hover:underline"
         >
           Remove
         </button>

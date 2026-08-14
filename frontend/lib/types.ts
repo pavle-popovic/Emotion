@@ -7,6 +7,7 @@ export type User = {
   email: string;
   full_name: string;
   role: string;
+  created_at: string | null;
   avatar_url: string | null;
   preferred_style: DanceStyle | null;
   is_onboarded: boolean;
@@ -83,10 +84,14 @@ export type ContinueCard = {
   progress_percent: number;
 };
 
+export type DayPractice = { label: string; practiced: boolean; is_today: boolean };
+
 export type Dashboard = {
   stats: { lessons_completed: number; courses_completed: number; day_streak: number };
   continue_card: ContinueCard | null;
   courses: CourseSummary[];
+  week: DayPractice[];
+  practice_days_this_week: number;
 };
 
 export const STYLE_ORDER: DanceStyle[] = ["hip_hop", "kizomba", "bachata", "afrobeats"];

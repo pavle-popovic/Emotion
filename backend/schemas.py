@@ -41,6 +41,7 @@ class UserOut(BaseModel):
     email: EmailStr
     full_name: str
     role: str
+    created_at: Optional[datetime] = None
     avatar_url: Optional[str] = None
     preferred_style: Optional[DanceStyle] = None
     is_onboarded: bool
@@ -160,7 +161,17 @@ class DashboardStats(BaseModel):
     day_streak: int
 
 
+class DayPractice(BaseModel):
+    """One cell of the profile's practice week."""
+
+    label: str
+    practiced: bool
+    is_today: bool
+
+
 class Dashboard(BaseModel):
     stats: DashboardStats
     continue_card: Optional[ContinueCard] = None
     courses: List[CourseSummary] = []
+    week: List[DayPractice] = []
+    practice_days_this_week: int = 0

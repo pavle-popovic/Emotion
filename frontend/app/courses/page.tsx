@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { ProgressBar } from "@/components/ProgressBar";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PageShell } from "@/components/PageShell";
+import { Badge, Card, EmptyState, ProgressBar, SectionHeading } from "@/components/ui";
+import { cx } from "@/lib/cx";
 import { getCurrentUser, listCourses } from "@/lib/api";
 import { STYLE_LABELS, STYLE_ORDER, type DanceStyle } from "@/lib/types";
 
@@ -19,81 +20,73 @@ export default async function CoursesPage({
   const style = isStyle(searchParams.style) ? searchParams.style : undefined;
   const [user, courses] = await Promise.all([getCurrentUser(), listCourses(style)]);
 
+  const chip = (active: boolean) =>
+    cx(
+      "inline-flex min-h-[44px] items-center rounded-pill border px-5 text-sm transition duration-[--dur] ease-ease",
+      active ? "border-gold text-gold" : "border-hairline-strong text-on-velvet-2 hover:border-gold",
+    );
+
   return (
-    <>
-      <SiteHeader user={user} />
+    <PageShell user={user}>
+      <div className="py-14">
+        <SectionHeading
+          title="Courses"
+          lede="Four styles, plus the musicality work that makes all of them land."
+        />
+      </div>
 
-      <main className="mx-auto max-w-5xl px-6 pb-24">
-        <h1 className="mb-1.5 font-display text-3xl font-normal">Courses</h1>
-        <p className="mb-7 text-sm text-cream/60">
-          Four styles, plus the musicality work that makes all of them land.
-        </p>
-
-        <div className="mb-8 flex flex-wrap gap-2">
-          <Link
-            href="/courses"
-            className={`rounded-pill border px-4 py-1.5 text-xs transition ${
-              style ? "border-cream/25 text-cream/70 hover:border-cream/50" : "border-gold text-gold"
-            }`}
-          >
-            All
+      <nav aria-label="Filter by style" className="mb-10 flex flex-wrap gap-3">
+        <Link href="/courses" className={chip(!style)}>
+          All
+        </Link>
+        {STYLE_ORDER.map((option) => (
+          <Link key={option} href={`/courses?style=${option}`} className={chip(style === option)}>
+            {STYLE_LABELS[option]}
           </Link>
-          {STYLE_ORDER.map((option) => (
-            <Link
-              key={option}
-              href={`/courses?style=${option}`}
-              className={`rounded-pill border px-4 py-1.5 text-xs transition ${
-                style === option
-                  ? "border-gold text-gold"
-                  : "border-cream/25 text-cream/70 hover:border-cream/50"
-              }`}
-            >
-              {STYLE_LABELS[option]}
-            </Link>
-          ))}
-        </div>
+        ))}
+      </nav>
 
-        {courses.length === 0 ? (
-          <p className="text-sm text-cream/60">Nothing published in this style yet.</p>
-        ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {courses.map((course) => (
-              <li key={course.id}>
-                <Link
-                  href={`/courses/${course.slug}`}
-                  className="card-dark group flex h-full flex-col p-5 transition hover:border-gold/60"
-                >
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <span className="text-[11px] uppercase tracking-[0.14em] text-gold">
+      {courses.length === 0 ? (
+        <EmptyState
+          title="Nothing published in this style yet."
+          body="New courses land every week. Try another style in the meantime."
+        />
+      ) : (
+        <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {courses.map((course) => (
+            <li key={course.id}>
+              <Card interactive className="h-full">
+                <Link href={`/courses/${course.slug}`} className="flex h-full flex-col p-6">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <span className="text-[12px] uppercase tracking-wide text-gold">
                       {course.style_label}
                     </span>
-                    {course.is_locked && (
-                      <span className="rounded-pill border border-cream/25 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.1em] text-cream/60">
-                        Members
-                      </span>
-                    )}
+                    {course.is_locked && <Badge tone="draft">Members</Badge>}
                   </div>
 
-                  <h2 className="font-display text-lg transition group-hover:text-gold">
-                    {course.title}
-                  </h2>
-                  <p className="mt-1.5 flex-1 text-[13px] leading-relaxed text-cream/60">
+                  <h2 className="font-display text-xl text-on-velvet">{course.title}</h2>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-on-velvet-2">
                     {course.summary}
                   </p>
 
-                  <div className="mt-4 text-xs text-cream/50">
+                  <div className="mt-5 text-[13px] text-on-velvet-faint">
                     {course.lesson_count} lessons
                     {course.completed_lessons > 0 && ` · ${course.completed_lessons} done`}
                   </div>
                   {course.progress_percent > 0 && (
-                    <ProgressBar percent={course.progress_percent} className="mt-2.5" height="h-1" />
+                    <ProgressBar
+                      percent={course.progress_percent}
+                      size="sm"
+                      className="mt-3"
+                      label={`${course.title} progress`}
+                    />
                   )}
                 </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </main>
-    </>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
+    </PageShell>
   );
 }

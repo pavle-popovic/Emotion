@@ -1,16 +1,19 @@
 import { redirect } from "next/navigation";
 
 import { PasswordForm, ProfileForm } from "@/components/AccountForms";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PageShell } from "@/components/PageShell";
+import { Badge, Button, SectionHeading } from "@/components/ui";
 import { getCurrentUser } from "@/lib/api";
+import type { BadgeTone } from "@/components/ui";
+import type { SubscriptionStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-const STATUS_COPY: Record<string, string> = {
-  trialing: "Free trial",
-  active: "Active",
-  past_due: "Payment failed",
-  canceled: "Canceled",
+const STATUS: Record<SubscriptionStatus, { label: string; tone: BadgeTone }> = {
+  trialing: { label: "Free trial", tone: "trial" },
+  active: { label: "Active", tone: "live" },
+  past_due: { label: "Payment failed", tone: "failed" },
+  canceled: { label: "Canceled", tone: "draft" },
 };
 
 export default async function AccountPage() {
@@ -18,48 +21,52 @@ export default async function AccountPage() {
   if (!user) redirect("/login");
 
   const sub = user.subscription;
+  const status = sub ? STATUS[sub.status] : null;
 
   return (
-    <>
-      <SiteHeader user={user} />
+    <PageShell user={user} width="panel">
+      <div className="py-14">
+        <SectionHeading title="Account" lede={user.email} />
+      </div>
 
-      <main className="mx-auto max-w-2xl px-6 pb-24">
-        <h1 className="mb-1.5 font-display text-3xl font-normal">Account</h1>
-        <p className="mb-8 break-words text-sm text-cream/60">{user.email}</p>
-
-        <div className="card-dark mb-6 p-5">
-          <h2 className="mb-2 font-display text-lg">Membership</h2>
-          {sub ? (
-            <p className="text-sm text-cream/70">
-              {STATUS_COPY[sub.status] ?? sub.status}
-              {sub.current_period_end && (
-                <>
-                  {" "}
-                  &middot; renews{" "}
-                  {new Date(sub.current_period_end).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </>
-              )}
-            </p>
-          ) : (
-            <p className="text-sm text-cream/70">
-              No membership yet. Start your free trial from{" "}
-              <a href="/dashboard" className="text-gold hover:underline">
-                My practice
-              </a>
-              .
-            </p>
-          )}
+      <section className="mb-6 rounded-card border border-hairline bg-glass px-8 py-8">
+        <div className="mb-3 flex flex-wrap items-center gap-4">
+          <h2 className="font-display text-[22px] text-on-velvet">Membership</h2>
+          {status && <Badge tone={status.tone}>{status.label}</Badge>}
         </div>
+        {sub ? (
+          <p className="text-sm text-on-velvet-2">
+            E&#8209;motion Membership &middot; €29/month
+            {sub.current_period_end && (
+              <>
+                {" "}
+                &middot; renews{" "}
+                {new Date(sub.current_period_end).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </>
+            )}
+          </p>
+        ) : (
+          <div>
+            <p className="mb-5 text-sm text-on-velvet-2">
+              No membership yet. Seven days free, then €29/month.
+            </p>
+            <Button href="/dashboard">Start 7 days free</Button>
+          </div>
+        )}
+      </section>
 
-        <div className="flex flex-col gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-card bg-cream-surface px-8 py-8 text-ink shadow-raised">
           <ProfileForm fullName={user.full_name} preferredStyle={user.preferred_style} />
+        </div>
+        <div className="rounded-card bg-cream-surface px-8 py-8 text-ink shadow-raised">
           <PasswordForm />
         </div>
-      </main>
-    </>
+      </div>
+    </PageShell>
   );
 }

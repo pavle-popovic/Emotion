@@ -23,6 +23,7 @@ from schemas import (
     CourseSummary,
     Dashboard,
     DashboardStats,
+    DayPractice,
     OnboardingRequest,
     PasswordChange,
     ProfileUpdate,
@@ -41,6 +42,7 @@ def serialize_user(user: User) -> UserOut:
         email=user.email,
         full_name=user.full_name,
         role=user.role.value,
+        created_at=user.created_at,
         avatar_url=user.avatar_url,
         preferred_style=user.preferred_style,
         is_onboarded=user.onboarded_at is not None,
@@ -181,6 +183,32 @@ def my_courses(db: Session = Depends(get_db), user: User = Depends(get_current_u
     return build_course_summaries(db, courses, user)
 
 
+def _practice_week(db: Session, user: User) -> List[DayPractice]:
+    """Mon-Sun of the current week, marking days with a completed lesson."""
+    completed_dates = {
+        row.date()
+        for row in db.scalars(
+            select(LessonProgress.completed_at).where(
+                LessonProgress.user_id == user.id, LessonProgress.completed.is_(True)
+            )
+        ).all()
+        if row is not None
+    }
+
+    today = date.today()
+    monday = today - timedelta(days=today.weekday())
+    labels = ("M", "T", "W", "T", "F", "S", "S")
+
+    return [
+        DayPractice(
+            label=labels[offset],
+            practiced=(monday + timedelta(days=offset)) in completed_dates,
+            is_today=(monday + timedelta(days=offset)) == today,
+        )
+        for offset in range(7)
+    ]
+
+
 @router.get("/dashboard", response_model=Dashboard)
 def dashboard(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     enrolled = list(
@@ -202,6 +230,8 @@ def dashboard(db: Session = Depends(get_db), user: User = Depends(get_current_us
         .where(LessonProgress.user_id == user.id, LessonProgress.completed.is_(True))
     )
 
+    week = _practice_week(db, user)
+
     return Dashboard(
         stats=DashboardStats(
             lessons_completed=lessons_completed,
@@ -210,6 +240,8 @@ def dashboard(db: Session = Depends(get_db), user: User = Depends(get_current_us
         ),
         continue_card=_continue_card(db, enrolled, user),
         courses=summaries,
+        week=week,
+        practice_days_this_week=sum(1 for day in week if day.practiced),
     )
 
 

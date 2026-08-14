@@ -1,49 +1,47 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Brand } from "@/components/Brand";
-import { SubmitButton } from "@/components/SubmitButton";
-import { chooseStyle } from "@/lib/actions";
+import { StyleStep } from "@/components/onboarding/StyleStep";
+import { EyebrowLabel } from "@/components/ui";
 import { getCurrentUser } from "@/lib/api";
-import { STYLE_HINTS, STYLE_LABELS, STYLE_ORDER } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-const NUMERALS = ["I", "II", "III", "IV"];
 
 export default async function StartPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
-      <div className="mb-10 text-center">
-        <Brand />
+    <div className="flex min-h-screen flex-col">
+      <nav className="flex items-center justify-between px-5 py-5 sm:px-8 lg:px-16">
+        <Link href="/" className="font-display text-2xl tracking-brand text-cream-surface">
+          E&#8209;MOTION
+        </Link>
+        <Link href="/dashboard" className="text-sm text-on-velvet-faint hover:text-gold">
+          Skip for now
+        </Link>
+      </nav>
+
+      <div className="flex flex-1 flex-col items-center justify-center px-5 pb-24 pt-10 sm:px-8">
+        {/* One step today. The bar shows one of one rather than implying two
+            more that do not exist. */}
+        <div className="mb-12 flex gap-2.5">
+          <div className="h-1 w-11 rounded-pill bg-gold" />
+        </div>
+
+        <div className="w-full max-w-[840px] text-center">
+          <EyebrowLabel className="mb-4">Step 1 of 1</EyebrowLabel>
+          <h1 className="mb-12 font-display text-[clamp(30px,4.4vw,44px)] leading-tight text-cream-surface">
+            Which style calls you first?
+          </h1>
+
+          <StyleStep />
+
+          <p className="mt-7 text-sm text-on-velvet-faint">
+            You can switch or add styles anytime.
+          </p>
+        </div>
       </div>
-
-      <h1 className="mb-8 text-center font-display text-[30px] font-normal leading-tight">
-        Which style calls you first?
-      </h1>
-
-      <div className="flex flex-col gap-3.5">
-        {STYLE_ORDER.map((style, index) => (
-          <form key={style} action={chooseStyle.bind(null, style)}>
-            <SubmitButton
-              className="flex w-full items-center gap-[18px] rounded-2xl border border-cream/[0.15] bg-cream/[0.05] px-[22px] py-5 text-left transition hover:border-gold/60 hover:bg-cream/[0.08] disabled:opacity-60"
-              pendingLabel="Setting up..."
-            >
-              <span className="w-7 shrink-0 font-display text-xl text-gold">{NUMERALS[index]}</span>
-              <span>
-                <span className="block font-display text-lg">{STYLE_LABELS[style]}</span>
-                <span className="mt-0.5 block text-[13px] text-cream/60">{STYLE_HINTS[style]}</span>
-              </span>
-            </SubmitButton>
-          </form>
-        ))}
-      </div>
-
-      <p className="mt-6 text-center text-[13px] text-cream/50">
-        You can switch or add styles anytime.
-      </p>
-    </main>
+    </div>
   );
 }
