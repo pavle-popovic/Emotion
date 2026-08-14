@@ -141,7 +141,7 @@ export function VideoUploader({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="rounded-pill border border-cream/25 px-3.5 py-1.5 transition hover:border-gold hover:text-gold"
+        className="inline-flex min-h-[44px] items-center rounded-pill border border-hairline-strong px-5 text-on-velvet transition duration-[--dur] ease-ease hover:border-gold hover:text-gold"
       >
         Upload video
       </button>
@@ -153,7 +153,7 @@ export function VideoUploader({
             setPhase("encoding");
             void pollUntilReady();
           }}
-          className="text-cream/50 underline-offset-2 transition hover:text-gold hover:underline"
+          className="inline-flex min-h-[44px] items-center text-on-velvet-faint underline-offset-2 transition duration-[--dur] ease-ease hover:text-gold hover:underline"
         >
           Sync in-flight upload
         </button>

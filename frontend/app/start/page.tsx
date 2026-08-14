@@ -14,10 +14,16 @@ export default async function StartPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <nav className="flex items-center justify-between px-5 py-5 sm:px-8 lg:px-16">
-        <Link href="/" className="font-display text-2xl tracking-brand text-cream-surface">
+        <Link
+          href="/"
+          className="inline-flex min-h-[44px] items-center font-display text-2xl tracking-brand text-cream-surface"
+        >
           E&#8209;MOTION
         </Link>
-        <Link href="/dashboard" className="text-sm text-on-velvet-faint hover:text-gold">
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-[44px] items-center text-sm text-on-velvet-faint hover:text-gold"
+        >
           Skip for now
         </Link>
       </nav>

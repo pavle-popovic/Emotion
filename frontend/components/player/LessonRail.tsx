@@ -31,7 +31,10 @@ export function LessonRail({
         >
           &#8249; Back
         </Link>
-        <Link href="/dashboard" className="text-[13px] text-on-velvet-faint hover:text-gold">
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-[44px] items-center text-[13px] text-on-velvet-faint hover:text-gold"
+        >
           My profile
         </Link>
       </div>

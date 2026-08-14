@@ -80,12 +80,14 @@ export function AdminCourseSettings({ course }: { course: AdminCourseDetail }) {
         </select>
       </div>
 
+      {/* The box is 24px; the touch target is the 44px label wrapping it, which
+          toggles the same control. */}
       <label className="flex min-h-[44px] items-center gap-3 self-end pb-3">
         <input
           type="checkbox"
           name="is_published"
           defaultChecked={course.is_published}
-          className="h-5 w-5 accent-gold"
+          className="h-6 w-6 accent-gold"
         />
         <span className="text-sm text-on-velvet-2">Published (visible in the catalog)</span>
       </label>
