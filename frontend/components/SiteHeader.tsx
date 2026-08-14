@@ -18,6 +18,11 @@ export function SiteHeader({ user }: { user: User | null }) {
             <Link href="/dashboard" className="transition hover:text-cream">
               My practice
             </Link>
+            {user.role === "admin" && (
+              <Link href="/admin" className="text-gold transition hover:text-cream">
+                Admin
+              </Link>
+            )}
             <form action={logout}>
               <button type="submit" className="text-cream/50 transition hover:text-gold">
                 Log out

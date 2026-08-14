@@ -1,3 +1,4 @@
+from . import mux
 from .access import course_is_unlocked, lesson_is_unlocked, require_lesson_access
 from .catalog import (
     build_course_detail,
@@ -9,6 +10,7 @@ from .catalog import (
 )
 
 __all__ = [
+    "mux",
     "course_is_unlocked",
     "lesson_is_unlocked",
     "require_lesson_access",

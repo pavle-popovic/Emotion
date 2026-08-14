@@ -72,6 +72,11 @@ class Lesson(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     body: Mapped[str] = mapped_column(Text, default="")
     mux_playback_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    mux_asset_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    # Held between creating a direct upload and the asset becoming ready, so the
+    # admin UI can poll an in-flight upload after a page reload.
+    mux_upload_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    mux_status: Mapped[str] = mapped_column(String(32), default="none", nullable=False)
     duration_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     # A preview lesson is readable even when the course is above the user's tier.
     # This is the hook the marketing site uses to let people taste a paid course.

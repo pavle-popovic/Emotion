@@ -25,6 +25,17 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str = "development"
 
+    # Mux (E-motion's own environment - never share these with another product).
+    MUX_TOKEN_ID: str = ""
+    MUX_TOKEN_SECRET: str = ""
+    # Set once a webhook endpoint is configured in the Mux dashboard. Until then
+    # the admin UI syncs upload state by polling instead.
+    MUX_WEBHOOK_SECRET: str = ""
+
+    @property
+    def mux_configured(self) -> bool:
+        return bool(self.MUX_TOKEN_ID and self.MUX_TOKEN_SECRET)
+
     @property
     def cors_origins(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
