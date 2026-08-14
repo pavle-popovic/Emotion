@@ -2,15 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-moss-900 text-cream antialiased;
+  }
+
+  /* Inputs inherit the dark surface treatment everywhere. */
+  input,
+  select,
+  textarea {
+    @apply font-sans;
+  }
 }
 
-html,
-body {
-  height: 100%;
-}
+@layer components {
+  /* The signature E-motion backdrop: two soft highlights over a green gradient.
+     Used on every full-bleed dark surface so the screens feel like one room. */
+  .bg-emotion {
+    background:
+      radial-gradient(120% 60% at 15% 5%, rgba(220, 255, 240, 0.1), rgba(220, 255, 240, 0) 55%),
+      radial-gradient(90% 45% at 82% 95%, rgba(236, 255, 246, 0.07), rgba(236, 255, 246, 0) 60%),
+      linear-gradient(160deg, #145643 0%, #0e4033 36%, #092e24 70%, #104836 100%);
+  }
 
-body {
-  @apply bg-ink-950 text-neutral-100 antialiased;
+  .label-caps {
+    @apply text-[11px] uppercase tracking-label text-gold;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-cream/20 bg-cream/[0.06] px-4 py-[15px] text-[15px]
+           text-cream placeholder:text-cream/45 outline-none transition
+           focus:border-gold focus:bg-cream/10;
+  }
+
+  .btn-cta {
+    @apply block w-full rounded-pill bg-cream-cta px-6 py-4 text-center text-[15px] font-semibold
+           text-moss transition hover:bg-cream disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-dark {
+    @apply block w-full rounded-pill bg-moss px-6 py-[15px] text-center text-[15px] font-semibold
+           text-cream transition hover:bg-moss-800;
+  }
+
+  .btn-ghost {
+    @apply block w-full rounded-pill border border-cream/25 px-6 py-3.5 text-center text-sm
+           text-cream transition hover:border-gold hover:text-gold;
+  }
+
+  .card-light {
+    @apply rounded-3xl bg-cream-card text-ink;
+  }
+
+  .card-dark {
+    @apply rounded-2xl border border-cream/[0.15] bg-cream/[0.07];
+  }
 }

@@ -1,30 +1,36 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import type { Metadata, Viewport } from "next";
+import { Figtree, Marcellus } from "next/font/google";
+
 import "./globals.css";
+
+const display = Marcellus({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const sans = Figtree({
+  weight: ["300", "400", "500", "600"],
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "E-motion",
-  description: "A learning management system.",
+  description:
+    "Learn to move the way music makes you feel. Structured hip hop, kizomba, bachata and afrobeats courses. No partner needed.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#092E24",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-full">
-        <header className="border-b border-ink-700/60">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              E-motion
-            </Link>
-            <div className="flex items-center gap-6 text-sm text-neutral-400">
-              <Link href="/courses" className="transition hover:text-neutral-100">
-                Courses
-              </Link>
-            </div>
-          </nav>
-        </header>
-        <main className="mx-auto max-w-5xl px-6 py-12">{children}</main>
-      </body>
+    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+      <body className="bg-emotion min-h-full">{children}</body>
     </html>
   );
 }

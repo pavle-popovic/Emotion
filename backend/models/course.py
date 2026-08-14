@@ -1,10 +1,22 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .style import DanceStyle
+from .subscription import SubscriptionTier
 
 
 class Course(Base):
@@ -13,7 +25,15 @@ class Course(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     slug: Mapped[str] = mapped_column(String(120), unique=True, index=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
+    summary: Mapped[str] = mapped_column(String(500), default="")
     description: Mapped[str] = mapped_column(Text, default="")
+    cover_image_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    style: Mapped[DanceStyle] = mapped_column(
+        Enum(DanceStyle), default=DanceStyle.ALL_STYLES, nullable=False, index=True
+    )
+    required_tier: Mapped[SubscriptionTier] = mapped_column(
+        Enum(SubscriptionTier), default=SubscriptionTier.FREE, nullable=False
+    )
     is_published: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -22,6 +42,11 @@ class Course(Base):
         "Module", back_populates="course", cascade="all, delete-orphan", order_by="Module.sort_order"
     )
     enrollments = relationship("Enrollment", back_populates="course", cascade="all, delete-orphan")
+
+    @property
+    def lessons_in_order(self) -> list["Lesson"]:
+        """Flat lesson sequence across modules - the order a student walks it."""
+        return [lesson for module in self.modules for lesson in module.lessons]
 
 
 class Module(Base):
@@ -46,8 +71,11 @@ class Lesson(Base):
     module_id: Mapped[int] = mapped_column(ForeignKey("modules.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     body: Mapped[str] = mapped_column(Text, default="")
-    video_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    mux_playback_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     duration_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # A preview lesson is readable even when the course is above the user's tier.
+    # This is the hook the marketing site uses to let people taste a paid course.
+    is_preview: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     module = relationship("Module", back_populates="lessons")
@@ -62,9 +90,13 @@ class Enrollment(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True)
     enrolled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_lesson_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("lessons.id", ondelete="SET NULL"), nullable=True
+    )
 
     user = relationship("User", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
+    last_seen_lesson = relationship("Lesson", foreign_keys=[last_seen_lesson_id])
 
 
 class LessonProgress(Base):
@@ -76,6 +108,9 @@ class LessonProgress(Base):
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"), index=True)
     completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     user = relationship("User", back_populates="progress")
     lesson = relationship("Lesson", back_populates="progress")

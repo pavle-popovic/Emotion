@@ -6,6 +6,8 @@ from models import User, get_db
 from schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut
 from security import create_access_token, get_current_user, hash_password, verify_password
 
+from .me import serialize_user
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
@@ -39,4 +41,5 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
-    return UserOut(id=user.id, email=user.email, full_name=user.full_name, role=user.role.value)
+    """Kept alongside GET /api/me so either path works."""
+    return serialize_user(user)

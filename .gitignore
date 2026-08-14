@@ -11,11 +11,16 @@ node_modules/
 .next/
 out/
 .turbo/
+*.tsbuildinfo
 
 # Env
 .env
 .env.local
 .env*.local
+
+# Full-resolution source art. Only the web-sized exports in frontend/public
+# belong in the repo.
+assets-src/
 
 # Tooling
 .vercel

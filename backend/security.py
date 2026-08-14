@@ -52,19 +52,46 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, _secret(), algorithm=settings.JWT_ALGORITHM)
 
 
-def get_current_user(
-    creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
-    db: Session = Depends(get_db),
-) -> User:
+def _user_from_credentials(
+    creds: Optional[HTTPAuthorizationCredentials], db: Session
+) -> Optional[User]:
     if creds is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not authenticated")
+        return None
     try:
         payload = jwt.decode(creds.credentials, _secret(), algorithms=[settings.JWT_ALGORITHM])
         user_id = int(payload["sub"])
     except (jwt.PyJWTError, KeyError, ValueError):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token")
+        return None
 
     user = db.get(User, user_id)
     if user is None or not user.is_active:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found")
+        return None
+    return user
+
+
+def get_current_user(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+) -> User:
+    user = _user_from_credentials(creds, db)
+    if user is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not authenticated")
+    return user
+
+
+def get_current_user_optional(
+    creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """For endpoints that render for signed-out visitors but personalise when signed in.
+
+    A bad or expired token resolves to None rather than 401, so a stale cookie
+    shows the logged-out catalog instead of erroring the whole page.
+    """
+    return _user_from_credentials(creds, db)
+
+
+def require_admin(user: User = Depends(get_current_user)) -> User:
+    if not user.is_admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Admins only")
     return user
