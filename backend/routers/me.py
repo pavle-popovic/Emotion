@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
@@ -24,9 +24,11 @@ from schemas import (
     Dashboard,
     DashboardStats,
     OnboardingRequest,
+    PasswordChange,
+    ProfileUpdate,
     UserOut,
 )
-from security import get_current_user
+from security import get_current_user, hash_password, verify_password
 from services import build_course_summaries, completed_lesson_ids, resume_lesson_id
 
 router = APIRouter(prefix="/me", tags=["me"])
@@ -100,6 +102,42 @@ def complete_onboarding(
     db.commit()
     db.refresh(user)
     return serialize_user(user)
+
+
+@router.patch("", response_model=UserOut)
+def update_profile(
+    payload: ProfileUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    data = payload.model_dump(exclude_unset=True)
+    if "full_name" in data and data["full_name"] is not None:
+        user.full_name = data["full_name"].strip()
+    if "preferred_style" in data and data["preferred_style"] is not None:
+        user.preferred_style = data["preferred_style"]
+    db.commit()
+    db.refresh(user)
+    return serialize_user(user)
+
+
+@router.post("/password", status_code=status.HTTP_204_NO_CONTENT)
+def change_password(
+    payload: PasswordChange,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Self-service password change.
+
+    Requires the current password even though the caller is authenticated: a
+    borrowed session should not be enough to lock the real owner out.
+    """
+    if not verify_password(payload.current_password, user.hashed_password):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "That is not your current password.")
+    if payload.current_password == payload.new_password:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Choose a different password.")
+
+    user.hashed_password = hash_password(payload.new_password)
+    db.commit()
 
 
 @router.post("/start-trial", response_model=UserOut, status_code=status.HTTP_201_CREATED)

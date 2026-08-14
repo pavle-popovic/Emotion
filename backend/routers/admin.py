@@ -25,6 +25,7 @@ from schemas_admin import (
     ModuleCreate,
     ModuleUpdate,
 )
+from schemas import ReorderRequest
 from security import require_admin
 from services import mux
 
@@ -210,6 +211,42 @@ def update_lesson(lesson_id: int, payload: LessonUpdate, db: Session = Depends(g
 def delete_lesson(lesson_id: int, db: Session = Depends(get_db)):
     db.delete(_lesson_or_404(db, lesson_id))
     db.commit()
+
+
+# --- ordering -----------------------------------------------------------
+
+
+def _apply_order(items, ids: List[int], label: str) -> None:
+    """Rewrite sort_order from a full ordered id list.
+
+    Rejects a list that is not exactly the current set: a partial list would
+    silently leave items with stale positions and scramble the sequence.
+    """
+    by_id = {item.id: item for item in items}
+    if set(ids) != set(by_id):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            f"Send every {label} id exactly once.",
+        )
+    for position, item_id in enumerate(ids):
+        by_id[item_id].sort_order = position
+
+
+@router.put("/courses/{course_id}/modules/order", response_model=AdminCourseDetail)
+def reorder_modules(course_id: int, payload: ReorderRequest, db: Session = Depends(get_db)):
+    course = _course_or_404(db, course_id)
+    _apply_order(course.modules, payload.ids, "module")
+    db.commit()
+    return get_course(course_id, db)
+
+
+@router.put("/modules/{module_id}/lessons/order", response_model=AdminModule)
+def reorder_lessons(module_id: int, payload: ReorderRequest, db: Session = Depends(get_db)):
+    module = _module_or_404(db, module_id)
+    _apply_order(module.lessons, payload.ids, "lesson")
+    db.commit()
+    db.refresh(module)
+    return AdminModule.model_validate(module)
 
 
 # --- video --------------------------------------------------------------

@@ -64,6 +64,7 @@ class LessonSummary(_ORM):
     # Per-viewer, so these are filled in by the route rather than the ORM.
     is_locked: bool = False
     is_completed: bool = False
+    position_seconds: int = 0
 
 
 class LessonDetail(LessonSummary):
@@ -116,6 +117,29 @@ class CourseDetail(CourseSummary):
 
 class ProgressUpdate(BaseModel):
     completed: bool = True
+
+
+class PositionUpdate(BaseModel):
+    """Playback heartbeat. Cheap on purpose - it fires every few seconds."""
+
+    position_seconds: int = Field(ge=0)
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=128)
+
+
+class ProfileUpdate(BaseModel):
+    full_name: Optional[str] = Field(default=None, max_length=255)
+    preferred_style: Optional[DanceStyle] = None
+
+
+class ReorderRequest(BaseModel):
+    """Full ordered list of ids. Sending the whole order avoids the races you get
+    from 'move item X up by one' when two edits overlap."""
+
+    ids: List[int]
 
 
 class ContinueCard(BaseModel):

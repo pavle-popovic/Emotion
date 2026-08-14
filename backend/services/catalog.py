@@ -132,6 +132,14 @@ def build_lesson_detail(db: Session, lesson: Lesson, user: Optional[User]) -> Le
     index = next((i for i, item in enumerate(sequence) if item.id == lesson.id), 0)
     completed = completed_lesson_ids(db, user, [lesson.id])
 
+    progress = None
+    if user is not None:
+        progress = db.scalar(
+            select(LessonProgress).where(
+                LessonProgress.user_id == user.id, LessonProgress.lesson_id == lesson.id
+            )
+        )
+
     return LessonDetail(
         id=lesson.id,
         title=lesson.title,
@@ -140,6 +148,7 @@ def build_lesson_detail(db: Session, lesson: Lesson, user: Optional[User]) -> Le
         is_preview=lesson.is_preview,
         is_locked=False,  # callers gate before building this
         is_completed=lesson.id in completed,
+        position_seconds=progress.position_seconds if progress else 0,
         body=lesson.body,
         mux_playback_id=lesson.mux_playback_id,
         module_id=lesson.module_id,

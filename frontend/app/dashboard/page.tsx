@@ -30,8 +30,8 @@ export default async function DashboardPage() {
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-cream/20 bg-cream/10 font-display text-2xl text-gold">
             {initials}
           </div>
-          <div>
-            <div className="font-display text-2xl">{user.full_name || "Dancer"}</div>
+          <div className="min-w-0">
+            <div className="break-words font-display text-2xl">{user.full_name || "Dancer"}</div>
             <div className="mt-0.5 text-[13px] text-cream/60">
               {user.preferred_style ? STYLE_LABELS[user.preferred_style] : "Pick a style to begin"}
             </div>
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
                 <li key={course.id} className="border-t border-cream/[0.14] px-0.5 py-3.5">
                   <Link href={`/courses/${course.slug}`} className="group block">
                     <div className="mb-2 flex items-baseline justify-between gap-4">
-                      <span className="font-display text-[15px] transition group-hover:text-gold">
+                      <span className="min-w-0 break-words font-display text-[15px] transition group-hover:text-gold">
                         {course.title}
                       </span>
                       <span className="shrink-0 text-xs text-gold">

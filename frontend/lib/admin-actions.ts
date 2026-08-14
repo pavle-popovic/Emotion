@@ -135,6 +135,58 @@ export async function deleteLesson(lessonId: number, courseId: number): Promise<
   revalidatePath(`/admin/courses/${courseId}`);
 }
 
+// --- ordering -----------------------------------------------------------
+
+/** Swap an item with its neighbour and send the whole resulting order. */
+function moved(ids: number[], id: number, direction: -1 | 1): number[] | null {
+  const from = ids.indexOf(id);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= ids.length) return null;
+  const next = [...ids];
+  [next[from], next[to]] = [next[to], next[from]];
+  return next;
+}
+
+export async function moveModule(
+  courseId: number,
+  moduleId: number,
+  direction: -1 | 1,
+): Promise<void> {
+  await assertAdmin();
+  const course = await api<AdminCourseDetail>(`/admin/courses/${courseId}`);
+  const ids = moved(course.modules.map((m) => m.id), moduleId, direction);
+  if (!ids) return;
+
+  await api(`/admin/courses/${courseId}/modules/order`, {
+    method: "PUT",
+    body: JSON.stringify({ ids }),
+  });
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/", "layout");
+}
+
+export async function moveLesson(
+  courseId: number,
+  moduleId: number,
+  lessonId: number,
+  direction: -1 | 1,
+): Promise<void> {
+  await assertAdmin();
+  const course = await api<AdminCourseDetail>(`/admin/courses/${courseId}`);
+  const module = course.modules.find((m) => m.id === moduleId);
+  if (!module) return;
+
+  const ids = moved(module.lessons.map((l) => l.id), lessonId, direction);
+  if (!ids) return;
+
+  await api(`/admin/modules/${moduleId}/lessons/order`, {
+    method: "PUT",
+    body: JSON.stringify({ ids }),
+  });
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/", "layout");
+}
+
 // --- video --------------------------------------------------------------
 
 export async function startVideoUpload(lessonId: number): Promise<DirectUpload> {

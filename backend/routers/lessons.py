@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from models import Course, Enrollment, Lesson, LessonProgress, Module, User, get_db
-from schemas import LessonDetail, ProgressUpdate
+from schemas import LessonDetail, PositionUpdate, ProgressUpdate
 from security import get_current_user, get_current_user_optional
 from services import build_lesson_detail, require_lesson_access
 
@@ -79,3 +79,31 @@ def set_progress(
     db.commit()
 
     return build_lesson_detail(db, lesson, user)
+
+
+@router.put("/{lesson_id}/position", status_code=status.HTTP_204_NO_CONTENT)
+def save_position(
+    lesson_id: int,
+    payload: PositionUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Remember where playback stopped.
+
+    Deliberately returns 204 and builds no response body: the player calls this
+    every few seconds and does not need anything back.
+    """
+    lesson = _load(db, lesson_id)
+    require_lesson_access(user, lesson)
+
+    progress = db.scalar(
+        select(LessonProgress).where(
+            LessonProgress.user_id == user.id, LessonProgress.lesson_id == lesson.id
+        )
+    )
+    if progress is None:
+        progress = LessonProgress(user_id=user.id, lesson_id=lesson.id)
+        db.add(progress)
+
+    progress.position_seconds = payload.position_seconds
+    db.commit()

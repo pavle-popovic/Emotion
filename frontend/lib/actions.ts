@@ -7,7 +7,8 @@ import { ApiError, api } from "./api";
 import { clearToken, writeToken } from "./session";
 import type { DanceStyle, User } from "./types";
 
-export type FormState = { error: string | null };
+/** `ok` distinguishes "saved" from the untouched initial state. */
+export type FormState = { error: string | null; ok?: boolean };
 
 const GENERIC_ERROR = "Something went wrong. Try again.";
 
@@ -76,6 +77,56 @@ export async function startTrial(): Promise<void> {
 export async function enroll(slug: string): Promise<void> {
   await api(`/courses/${encodeURIComponent(slug)}/enroll`, { method: "POST" });
   revalidatePath(`/courses/${slug}`);
+}
+
+/**
+ * Playback heartbeat. Deliberately does not revalidate anything - it fires every
+ * few seconds and re-rendering the tree each time would be wasteful and janky.
+ */
+export async function saveLessonPosition(lessonId: number, seconds: number): Promise<void> {
+  try {
+    await api(`/lessons/${lessonId}/position`, {
+      method: "PUT",
+      body: JSON.stringify({ position_seconds: Math.max(0, Math.floor(seconds)) }),
+    });
+  } catch {
+    // Losing a heartbeat is not worth surfacing to someone mid-lesson.
+  }
+}
+
+export async function updateProfile(_prev: FormState, formData: FormData): Promise<FormState> {
+  try {
+    await api("/me", {
+      method: "PATCH",
+      body: JSON.stringify({
+        full_name: String(formData.get("full_name") ?? "").trim(),
+        preferred_style: String(formData.get("preferred_style") ?? "") || null,
+      }),
+    });
+  } catch (err) {
+    return { error: messageFor(err, GENERIC_ERROR) };
+  }
+  revalidatePath("/", "layout");
+  return { error: null, ok: true };
+}
+
+export async function changePassword(_prev: FormState, formData: FormData): Promise<FormState> {
+  const current = String(formData.get("current_password") ?? "");
+  const next = String(formData.get("new_password") ?? "");
+  const confirm = String(formData.get("confirm_password") ?? "");
+
+  if (next.length < 8) return { error: "Use at least 8 characters." };
+  if (next !== confirm) return { error: "The two new passwords do not match." };
+
+  try {
+    await api("/me/password", {
+      method: "POST",
+      body: JSON.stringify({ current_password: current, new_password: next }),
+    });
+  } catch (err) {
+    return { error: messageFor(err, "Could not change your password.") };
+  }
+  return { error: null, ok: true };
 }
 
 export async function setLessonProgress(lessonId: number, completed: boolean): Promise<void> {

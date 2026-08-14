@@ -201,6 +201,77 @@ def test_lesson_can_be_edited_and_marked_preview(client, admin_headers, scratch_
     assert res.json()["is_preview"] is True
 
 
+def test_modules_can_be_reordered(client, admin_headers, scratch_course):
+    course_id = scratch_course["id"]
+    ids = [
+        client.post(
+            f"/api/admin/courses/{course_id}/modules",
+            json={"title": name},
+            headers=admin_headers,
+        ).json()["id"]
+        for name in ("One", "Two", "Three")
+    ]
+
+    res = client.put(
+        f"/api/admin/courses/{course_id}/modules/order",
+        json={"ids": [ids[2], ids[0], ids[1]]},
+        headers=admin_headers,
+    )
+    assert res.status_code == 200
+    assert [m["title"] for m in res.json()["modules"]] == ["Three", "One", "Two"]
+
+
+def test_lessons_can_be_reordered(client, admin_headers, scratch_course):
+    module = client.post(
+        f"/api/admin/courses/{scratch_course['id']}/modules",
+        json={"title": "M"},
+        headers=admin_headers,
+    ).json()
+    ids = [
+        client.post(
+            f"/api/admin/modules/{module['id']}/lessons",
+            json={"title": name},
+            headers=admin_headers,
+        ).json()["id"]
+        for name in ("A", "B", "C")
+    ]
+
+    res = client.put(
+        f"/api/admin/modules/{module['id']}/lessons/order",
+        json={"ids": list(reversed(ids))},
+        headers=admin_headers,
+    )
+    assert res.status_code == 200
+    assert [l["title"] for l in res.json()["lessons"]] == ["C", "B", "A"]
+
+
+def test_a_partial_reorder_is_rejected(client, admin_headers, scratch_course):
+    """Half a list would silently leave the rest with stale positions."""
+    course_id = scratch_course["id"]
+    first = client.post(
+        f"/api/admin/courses/{course_id}/modules", json={"title": "One"}, headers=admin_headers
+    ).json()
+    client.post(
+        f"/api/admin/courses/{course_id}/modules", json={"title": "Two"}, headers=admin_headers
+    )
+
+    res = client.put(
+        f"/api/admin/courses/{course_id}/modules/order",
+        json={"ids": [first["id"]]},
+        headers=admin_headers,
+    )
+    assert res.status_code == 400
+
+
+def test_students_cannot_reorder(client, student_headers, scratch_course):
+    res = client.put(
+        f"/api/admin/courses/{scratch_course['id']}/modules/order",
+        json={"ids": []},
+        headers=student_headers,
+    )
+    assert res.status_code == 403
+
+
 def test_video_sync_without_an_upload_is_a_400(client, admin_headers, scratch_course):
     module = client.post(
         f"/api/admin/courses/{scratch_course['id']}/modules",

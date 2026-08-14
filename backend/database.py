@@ -1,16 +1,17 @@
-"""Schema management.
+"""Schema helpers.
 
-    python -m database          create any missing tables
-    python -m database --reset  drop everything and rebuild (destroys all data)
+**Migrations are Alembic's job**, not this file's:
 
-Both re-apply RLS afterwards. That matters: these tables live in Supabase's
-`public` schema, which PostgREST exposes to the anon key. RLS with zero policies
-denies anon and authenticated outright, while the backend connects as `postgres`
-and bypasses it. Creating a table without doing this would publish
-`users.hashed_password` to anyone holding the (public by design) anon key.
+    alembic upgrade head                      apply pending migrations
+    alembic revision --autogenerate -m "..."  write a new one from model changes
+    alembic downgrade -1                      step back one
 
-This is deliberately not a migration tool. Before real users exist, swap it for
-Alembic - `create_all` cannot alter a column or move data.
+Railway runs `alembic upgrade head` as its pre-deploy command, so production
+migrates itself on every deploy.
+
+What remains here is a development convenience for throwing away a scratch
+database. It must never be pointed at a database with real users: create_all
+cannot alter a column or move data, which is exactly why Alembic exists.
 """
 import sys
 
@@ -30,21 +31,26 @@ RLS_TABLES = (
 
 
 def apply_rls() -> None:
+    """Mirror of the RLS step in the initial migration, for scratch databases."""
     with get_engine().begin() as conn:
         for table in RLS_TABLES:
             conn.execute(text(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY"))
     print(f"RLS enabled on {len(RLS_TABLES)} tables.")
 
 
-def init_db(reset: bool = False) -> None:
+def reset() -> None:
     engine = get_engine()
-    if reset:
-        Base.metadata.drop_all(bind=engine)
-        print("Dropped all tables.")
-    Base.metadata.create_all(bind=engine)
-    print("Tables created.")
-    apply_rls()
+    Base.metadata.drop_all(bind=engine)
+    with engine.begin() as conn:
+        conn.execute(text("DROP TABLE IF EXISTS alembic_version"))
+    print("Dropped all tables. Now run: alembic upgrade head")
 
 
 if __name__ == "__main__":
-    init_db(reset="--reset" in sys.argv)
+    if "--reset" in sys.argv:
+        reset()
+    else:
+        raise SystemExit(
+            "Use `alembic upgrade head` to build or migrate the schema.\n"
+            "This script only offers --reset, which DESTROYS ALL DATA."
+        )

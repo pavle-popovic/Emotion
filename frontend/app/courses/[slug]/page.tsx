@@ -99,13 +99,13 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                       >
                         &#10003;
                       </span>
-                      <span className="flex-1 text-sm">{lesson.title}</span>
+                      <span className="min-w-0 flex-1 break-words text-sm">{lesson.title}</span>
                       {lesson.is_preview && !lesson.is_completed && (
-                        <span className="text-[10px] uppercase tracking-[0.1em] text-gold">
+                        <span className="shrink-0 text-[10px] uppercase tracking-[0.1em] text-gold">
                           Free
                         </span>
                       )}
-                      <span className="text-xs text-cream/45">
+                      <span className="shrink-0 text-xs text-cream/45">
                         {lesson.is_locked ? "Members" : duration(lesson.duration_seconds)}
                       </span>
                     </>

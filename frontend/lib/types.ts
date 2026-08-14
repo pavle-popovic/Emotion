@@ -26,6 +26,7 @@ export type LessonSummary = {
   is_preview: boolean;
   is_locked: boolean;
   is_completed: boolean;
+  position_seconds: number;
 };
 
 export type LessonDetail = LessonSummary & {

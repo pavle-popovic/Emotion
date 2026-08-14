@@ -11,12 +11,38 @@ import {
   deleteLesson,
   deleteModule,
   getCourse,
+  moveLesson,
+  moveModule,
   updateCourse,
 } from "@/lib/admin-actions";
 import { getCurrentUser } from "@/lib/api";
 import { STYLE_LABELS, STYLE_ORDER } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+
+/** Single-button form. Ordering is a server round trip, so it cannot be a link. */
+function Reorder({
+  action,
+  label,
+  glyph,
+}: {
+  action: () => Promise<void>;
+  label: string;
+  glyph: string;
+}) {
+  return (
+    <form action={action}>
+      <button
+        type="submit"
+        aria-label={label}
+        title={label}
+        className="rounded-md border border-cream/20 px-2 py-0.5 text-xs text-cream/60 transition hover:border-gold hover:text-gold"
+      >
+        {glyph}
+      </button>
+    </form>
+  );
+}
 
 export default async function AdminCoursePage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
@@ -114,23 +140,35 @@ export default async function AdminCoursePage({ params }: { params: { id: string
         <div className="mb-6 flex flex-col gap-5">
           {course.modules.map((module) => (
             <section key={module.id} className="card-dark p-5">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="font-display text-lg">{module.title}</h3>
-                <form action={deleteModule.bind(null, module.id, course.id)}>
-                  <button
-                    type="submit"
-                    className="text-xs text-cream/40 transition hover:text-red-300"
-                  >
-                    Delete module
-                  </button>
-                </form>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                <h3 className="min-w-0 flex-1 font-display text-lg">{module.title}</h3>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <Reorder
+                    action={moveModule.bind(null, course.id, module.id, -1)}
+                    label="Move module up"
+                    glyph="↑"
+                  />
+                  <Reorder
+                    action={moveModule.bind(null, course.id, module.id, 1)}
+                    label="Move module down"
+                    glyph="↓"
+                  />
+                  <form action={deleteModule.bind(null, module.id, course.id)}>
+                    <button
+                      type="submit"
+                      className="px-2 text-xs text-cream/40 transition hover:text-red-300"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
               </div>
 
               <ul className="mb-4 flex flex-col divide-y divide-cream/10">
                 {module.lessons.map((lesson) => (
                   <li key={lesson.id} className="py-3">
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-sm">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <span className="min-w-0 flex-1 break-words text-sm">
                         {lesson.title}
                         {lesson.is_preview && (
                           <span className="ml-2 text-[10px] uppercase tracking-[0.1em] text-gold">
@@ -138,14 +176,26 @@ export default async function AdminCoursePage({ params }: { params: { id: string
                           </span>
                         )}
                       </span>
-                      <form action={deleteLesson.bind(null, lesson.id, course.id)}>
-                        <button
-                          type="submit"
-                          className="text-xs text-cream/40 transition hover:text-red-300"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        <Reorder
+                          action={moveLesson.bind(null, course.id, module.id, lesson.id, -1)}
+                          label="Move lesson up"
+                          glyph="↑"
+                        />
+                        <Reorder
+                          action={moveLesson.bind(null, course.id, module.id, lesson.id, 1)}
+                          label="Move lesson down"
+                          glyph="↓"
+                        />
+                        <form action={deleteLesson.bind(null, lesson.id, course.id)}>
+                          <button
+                            type="submit"
+                            className="px-2 text-xs text-cream/40 transition hover:text-red-300"
+                          >
+                            Delete
+                          </button>
+                        </form>
+                      </div>
                     </div>
                     <VideoUploader lesson={lesson} courseId={course.id} />
                   </li>

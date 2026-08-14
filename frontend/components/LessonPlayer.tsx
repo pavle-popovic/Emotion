@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
-import { setLessonProgress } from "@/lib/actions";
+import { saveLessonPosition, setLessonProgress } from "@/lib/actions";
 import { clock } from "@/lib/format";
 
 // ~250kB of player. Kept out of the shared bundle so the shell and the practice
@@ -19,6 +19,15 @@ const SPEEDS = [70, 80, 90, 100, 110] as const;
 /** Most dance footage is 25-30fps; 1/30s is a close enough nudge for study. */
 const FRAME_STEP = 1 / 30;
 
+/** How often the resume point is persisted while playing. */
+const SAVE_EVERY_SECONDS = 10;
+
+/** Below this, resuming is more annoying than starting over. */
+const RESUME_FLOOR_SECONDS = 5;
+
+/** Within this of the end, they finished; start again from the top. */
+const RESUME_TAIL_SECONDS = 15;
+
 type MediaEl = HTMLVideoElement & { textTracks?: TextTrackList };
 
 type Props = {
@@ -27,6 +36,7 @@ type Props = {
   playbackId: string | null;
   isCompleted: boolean;
   durationHint: number;
+  startAt: number;
 };
 
 export function LessonPlayer({
@@ -35,6 +45,7 @@ export function LessonPlayer({
   playbackId,
   isCompleted,
   durationHint,
+  startAt,
 }: Props) {
   const ref = useRef<MediaEl | null>(null);
   const [speed, setSpeed] = useState(100);
@@ -86,11 +97,48 @@ export function LessonPlayer({
     return () => window.removeEventListener("keydown", onKey);
   }, [nudge]);
 
+  const lastSaved = useRef(startAt);
+
+  const persist = useCallback(
+    (seconds: number) => {
+      lastSaved.current = seconds;
+      void saveLessonPosition(lessonId, seconds);
+    },
+    [lessonId],
+  );
+
+  // Save on the way out too, so closing the tab mid-lesson still resumes.
+  useEffect(() => {
+    function flush() {
+      const el = ref.current;
+      if (el && Math.abs(el.currentTime - lastSaved.current) > 1) persist(el.currentTime);
+    }
+    window.addEventListener("pagehide", flush);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [persist]);
+
+  function onLoadedMetadata() {
+    const el = ref.current;
+    if (!el) return;
+    setDuration(el.duration || durationHint);
+
+    const total = el.duration || durationHint;
+    const resumable =
+      startAt > RESUME_FLOOR_SECONDS && (!total || startAt < total - RESUME_TAIL_SECONDS);
+    if (resumable) el.currentTime = startAt;
+  }
+
   function onTimeUpdate() {
     const el = ref.current;
     if (!el) return;
     setCurrent(el.currentTime);
     if (loop && el.currentTime >= loop.b) el.currentTime = loop.a;
+    if (Math.abs(el.currentTime - lastSaved.current) >= SAVE_EVERY_SECONDS) {
+      persist(el.currentTime);
+    }
   }
 
   function toggleCaptions() {
@@ -130,7 +178,9 @@ export function LessonPlayer({
   const chipOn = "border-gold bg-gold/20 text-gold";
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
+    // xl, not lg: at 1024px the lesson rail already takes 296px, and splitting
+    // what is left again squeezed the video to roughly a third of the screen.
+    <div className="grid gap-5 xl:grid-cols-[1fr_300px]">
       {/* Stage */}
       <div className="relative overflow-hidden rounded-2xl bg-[#061F19]">
         <div className="aspect-video">
@@ -142,7 +192,8 @@ export function LessonPlayer({
               streamType="on-demand"
               accentColor="#B08D57"
               onTimeUpdate={onTimeUpdate}
-              onLoadedMetadata={() => setDuration(ref.current?.duration ?? durationHint)}
+              onLoadedMetadata={onLoadedMetadata}
+              onPause={() => ref.current && persist(ref.current.currentTime)}
               onEnded={markComplete}
               style={{
                 height: "100%",

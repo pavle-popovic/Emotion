@@ -159,6 +159,7 @@ export default async function LessonPage({
           playbackId={lesson.mux_playback_id}
           isCompleted={lesson.is_completed}
           durationHint={lesson.duration_seconds}
+          startAt={lesson.position_seconds}
         />
 
         {lesson.body && (
