@@ -16,13 +16,13 @@ const ACCOUNT = [
 
 function Column({ title, links }: { title: string; links: typeof LEARN }) {
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col">
       <span className="text-[12px] uppercase tracking-wide text-gold">{title}</span>
       {links.map((link) => (
         <Link
           key={link.href}
           href={link.href}
-          className="text-sm text-on-velvet-2 transition duration-[--dur] ease-ease hover:text-gold"
+          className="inline-flex min-h-[44px] items-center text-sm text-on-velvet-2 transition duration-[--dur] ease-ease hover:text-gold"
         >
           {link.label}
         </Link>

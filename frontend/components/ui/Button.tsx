@@ -11,7 +11,8 @@ const VARIANTS: Record<ButtonVariant, string> = {
   // Emerald pill on cream panels, where a cream button would vanish.
   emerald: "bg-moss text-cream-surface hover:bg-gold hover:text-white",
   ghost: "border border-hairline-strong text-on-velvet hover:border-gold hover:text-gold",
-  link: "text-gold underline-offset-4 hover:underline p-0 rounded-none",
+  // Still 44px tall: a text link is a touch target like any other.
+  link: "min-h-[44px] text-gold underline-offset-4 hover:underline rounded-none",
 };
 
 /** Min height 44px at every size, for touch. */

@@ -36,7 +36,9 @@ export function Nav({ user }: { user: User | null }) {
     };
   }, [open]);
 
-  const linkClass = "text-[15px] text-on-velvet-2 transition duration-[--dur] ease-ease hover:text-gold";
+  // Every nav item is a 44px touch target, not just a line of text.
+  const linkClass =
+    "inline-flex min-h-[44px] items-center text-[15px] text-on-velvet-2 transition duration-[--dur] ease-ease hover:text-gold";
 
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-moss-900/[0.92] backdrop-blur-[10px]">
@@ -46,7 +48,7 @@ export function Nav({ user }: { user: User | null }) {
       >
         <Link
           href="/"
-          className="font-display text-[22px] tracking-brand text-on-velvet transition duration-[--dur] ease-ease hover:text-gold sm:text-[26px]"
+          className="inline-flex min-h-[44px] items-center font-display text-[22px] tracking-brand text-on-velvet transition duration-[--dur] ease-ease hover:text-gold sm:text-[26px]"
         >
           E&#8209;MOTION
         </Link>
@@ -61,7 +63,10 @@ export function Nav({ user }: { user: User | null }) {
           {user ? (
             <>
               {user.role === "admin" && (
-                <Link href="/admin" className="text-[15px] text-gold hover:underline">
+                <Link
+                  href="/admin"
+                  className="inline-flex min-h-[44px] items-center text-[15px] text-gold hover:underline"
+                >
                   Admin
                 </Link>
               )}
@@ -71,7 +76,10 @@ export function Nav({ user }: { user: User | null }) {
             </>
           ) : (
             <>
-              <Link href="/login" className="text-[15px] text-on-velvet hover:text-gold">
+              <Link
+                href="/login"
+                className="inline-flex min-h-[44px] items-center text-[15px] text-on-velvet hover:text-gold"
+              >
                 Log in
               </Link>
               <Link
