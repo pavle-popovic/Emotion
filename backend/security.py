@@ -2,25 +2,38 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from config import settings
 from models import User, get_db
 
-_pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 _bearer = HTTPBearer(auto_error=False)
+
+# bcrypt hashes at most 72 bytes and raises on anything longer. Truncate here so
+# a long passphrase is accepted rather than 500ing, and do it in both directions
+# so hash and verify always see the same bytes. Deliberately not passlib: that
+# project last shipped in 2020 and breaks against bcrypt 4.1+.
+_MAX_BCRYPT_BYTES = 72
+
+
+def _to_bytes(raw: str) -> bytes:
+    return raw.encode("utf-8")[:_MAX_BCRYPT_BYTES]
 
 
 def hash_password(raw: str) -> str:
-    return _pwd.hash(raw)
+    return bcrypt.hashpw(_to_bytes(raw), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(raw: str, hashed: str) -> bool:
-    return _pwd.verify(raw, hashed)
+    try:
+        return bcrypt.checkpw(_to_bytes(raw), hashed.encode("utf-8"))
+    except ValueError:
+        # Malformed or truncated hash in the row: treat as a failed login.
+        return False
 
 
 def _secret() -> str:
