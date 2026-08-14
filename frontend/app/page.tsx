@@ -12,7 +12,7 @@ import {
   StyleTag,
 } from "@/components/ui";
 import { getCurrentUser, listCourses } from "@/lib/api";
-import { STYLE_HINTS, STYLE_LABELS, STYLE_ORDER } from "@/lib/types";
+import { STYLE_HINTS, STYLE_LABELS, STYLE_ORDER, type DanceStyle } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +37,11 @@ export default async function HomePage() {
   const ctaHref = user ? "/dashboard" : "/register";
   const ctaLabel = user ? "Go to my practice" : "Start 7 days free";
   const lessonTotal = courses.reduce((sum, c) => sum + c.lesson_count, 0);
+
+  // Style tiles borrow the cover of the first course in that style, so the
+  // catalog and the tiles can never drift apart.
+  const coverFor = (style: DanceStyle) =>
+    courses.find((c) => c.style === style && c.cover_image_url)?.cover_image_url ?? null;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -103,10 +108,22 @@ export default async function HomePage() {
             {STYLE_ORDER.map((style, index) => (
               <Card key={style} interactive className="overflow-hidden">
                 <a href={`/courses?style=${style}`} className="block">
-                  <div className="flex aspect-[4/3] items-end bg-gradient-to-br from-glass-hover to-transparent p-6">
-                    <span className="font-display text-[44px] leading-none text-gold/70">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
+                  <div className="relative aspect-[4/3]">
+                    {coverFor(style) ? (
+                      <Image
+                        src={coverFor(style)!}
+                        alt=""
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-end bg-gradient-to-br from-glass-hover to-transparent p-6">
+                        <span className="font-display text-[44px] leading-none text-gold/70">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="px-6 pb-7 pt-6">
                     <h3 className="mb-2.5 font-display text-[22px] text-on-velvet">

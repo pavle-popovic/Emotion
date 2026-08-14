@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -27,7 +28,8 @@ export default async function CoursePage({ params }: { params: { slug: string } 
         &larr; All courses
       </Link>
 
-      <header className="pb-10">
+      <header className="grid items-start gap-10 pb-10 lg:grid-cols-[1fr_360px]">
+        <div>
         <EyebrowLabel className="mb-4">
           {course.style_label} &middot; {course.lesson_count} lessons
           {course.total_duration_seconds > 0 && ` · ${duration(course.total_duration_seconds)}`}
@@ -68,6 +70,20 @@ export default async function CoursePage({ params }: { params: { slug: string } 
             <Button href={user ? "/dashboard" : "/register"} variant="emerald">
               Start 7 days free
             </Button>
+          </div>
+        )}
+        </div>
+
+        {course.cover_image_url && (
+          <div className="relative aspect-[4/3] overflow-hidden rounded-card lg:order-last">
+            <Image
+              src={course.cover_image_url}
+              alt={`Sanjay MJ, who teaches ${course.title}`}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 360px"
+              className="object-cover"
+            />
           </div>
         )}
       </header>

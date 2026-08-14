@@ -5,6 +5,9 @@ Run from backend/ with `python -m scripts.seed_demo`.
 
 Lessons carry no mux_playback_id yet - video gets attached once the Mux
 environment exists. Every course renders and is walkable without it.
+
+Course covers are the Sanjay portraits in frontend/public/courses/, one per
+course, picked so no two cards share a backdrop.
 """
 import sys
 from pathlib import Path
@@ -115,8 +118,22 @@ def seed(session: Session) -> None:
         course.description = spec["description"]
         course.style = spec["style"]
         course.required_tier = spec["required_tier"]
+        # Covers ship with the frontend, so the path is stable and needs no CDN.
+        course.cover_image_url = f"/courses/{spec['slug']}.jpg"
         course.is_published = True
         course.sort_order = order
+
+        # Rebuilding modules deletes their lessons, and with them any Mux
+        # playback ids - which would orphan assets we are still paying to store.
+        # Once a course has real video, only its copy is refreshed.
+        has_video = any(
+            lesson.mux_asset_id for module in course.modules for lesson in module.lessons
+        )
+        if has_video:
+            session.commit()
+            print(f"  {course.slug}: has video, left its lessons alone")
+            continue
+
         course.modules.clear()
         session.flush()
 

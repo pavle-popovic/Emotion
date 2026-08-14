@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { PageShell } from "@/components/PageShell";
@@ -55,8 +56,20 @@ export default async function CoursesPage({
         <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {courses.map((course) => (
             <li key={course.id}>
-              <Card interactive className="h-full">
-                <Link href={`/courses/${course.slug}`} className="flex h-full flex-col p-6">
+              <Card interactive className="h-full overflow-hidden">
+                <Link href={`/courses/${course.slug}`} className="flex h-full flex-col">
+                  {course.cover_image_url && (
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={course.cover_image_url}
+                        alt=""
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col p-6">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <span className="text-[12px] uppercase tracking-wide text-gold">
                       {course.style_label}
@@ -81,6 +94,7 @@ export default async function CoursesPage({
                       label={`${course.title} progress`}
                     />
                   )}
+                  </div>
                 </Link>
               </Card>
             </li>
