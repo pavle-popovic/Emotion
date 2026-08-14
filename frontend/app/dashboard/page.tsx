@@ -38,8 +38,9 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Membership prompt, only while they are on the free tier */}
-        {user.tier === "free" && (
+        {/* Membership prompt. Admins bypass tier gating entirely, so selling
+            them a membership would be nonsense. */}
+        {user.tier === "free" && user.role !== "admin" && (
           <section className="card-light mb-7 px-6 py-6">
             <p className="mb-1.5 text-[11px] uppercase tracking-label text-gold">Membership</p>
             <h2 className="mb-2 font-display text-xl font-normal text-moss">
